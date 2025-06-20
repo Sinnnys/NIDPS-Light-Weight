@@ -26,7 +26,7 @@ The system uses a unified architecture where everything runs in one application:
 
 1. **Clone and setup**:
 ```bash
-cd /home/sinnys/Downloads
+cd to where you want it to be
 git clone <repository-url> NIDPS
 cd NIDPS
 ```
