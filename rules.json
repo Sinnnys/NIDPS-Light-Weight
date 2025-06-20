@@ -1,0 +1,28 @@
+{
+    "rules": [
+        {
+            "rule_name": "ICMP Echo Request (Ping)",
+            "protocol": "ICMP",
+            "conditions": {
+                "type": 8
+            },
+            "action": "log"
+        },
+        {
+            "rule_name": "Potential TCP Port Scan (SYN)",
+            "protocol": "TCP",
+            "conditions": {
+                "flags": "S"
+            },
+            "action": "log"
+        },
+        {
+            "rule_name": "SSH Connection Attempt",
+            "protocol": "TCP",
+            "conditions": {
+                "dport": 22
+            },
+            "action": "log"
+        }
+    ]
+} 

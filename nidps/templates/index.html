@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to your NIDPS, {{ current_user.username }}!</h1>
+    <p>This is a lightweight Network Intrusion Detection and Prevention System.</p>
+    <p>Go to the <a href="{{ url_for('web.dashboard') }}">Dashboard</a> to manage the system.</p>
+{% endblock %} 

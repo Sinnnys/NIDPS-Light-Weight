@@ -1,0 +1,23 @@
+[Unit]
+Description=NIDPS Sniffer Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/sinnys/Downloads/NIDPS
+Environment=PATH=/home/sinnys/Downloads/NIDPS/venv/bin
+ExecStart=/home/sinnys/Downloads/NIDPS/venv/bin/python /home/sinnys/Downloads/NIDPS/sniffer_service.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/sinnys/Downloads/NIDPS/logs /home/sinnys/Downloads/NIDPS/rules.json
+
+[Install]
+WantedBy=multi-user.target 

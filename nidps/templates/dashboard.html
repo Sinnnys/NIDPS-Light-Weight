@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Engine Status</span>
+                                    <span class="info-box-number" id="engineStatus">
+                                        <span class="badge badge-secondary">Loading...</span>
+                                    </span>
+                                    <div class="progress">
+                                        <div class="progress-bar" id="engineProgress"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Active Alerts</span>
+                                    <span class="info-box-number" id="alertsCount">0</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-warning" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger">
+                                    <i class="fas fa-ban"></i>
+                                </span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Blocked IPs</span>
+                                    <span class="info-box-number" id="blockedIPsCount">0</span>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-danger" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Engine Controls</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-success" onclick="startEngine()">
+                                            <i class="fas fa-play"></i> Start Engine
+                                        </button>
+                                        <button type="button" class="btn btn-danger" onclick="stopEngine()">
+                                            <i class="fas fa-stop"></i> Stop Engine
+                                        </button>
+                                    </div>
+                                    <div id="engineMessage" class="mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Quick Actions</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <a href="{{ url_for('web.alerts') }}" class="btn btn-outline-primary btn-block">
+                                                <i class="fas fa-bell"></i> View Alerts
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a href="{{ url_for('web.logs') }}" class="btn btn-outline-info btn-block">
+                                                <i class="fas fa-file-alt"></i> System Logs
+                                            </a>
+                                        </div>
+                                        {% if current_user.role and current_user.role.name == 'admin' %}
+                                        <div class="col-md-3">
+                                            <a href="{{ url_for('web.blocked_ips') }}" class="btn btn-outline-warning btn-block">
+                                                <i class="fas fa-ban"></i> Blocked IPs
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <a href="{{ url_for('web.rules') }}" class="btn btn-outline-secondary btn-block">
+                                                <i class="fas fa-cogs"></i> Manage Rules
+                                            </a>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateEngineStatus() {
+    fetch('/api/engine_status')
+        .then(response => response.json())
+        .then(data => {
+            const statusElement = document.getElementById('engineStatus');
+            const progressElement = document.getElementById('engineProgress');
+            
+            if (data.running) {
+                statusElement.innerHTML = '<span class="badge badge-success">Running</span>';
+                progressElement.className = 'progress-bar bg-success';
+                progressElement.style.width = '100%';
+            } else {
+                statusElement.innerHTML = '<span class="badge badge-danger">Stopped</span>';
+                progressElement.className = 'progress-bar bg-danger';
+                progressElement.style.width = '0%';
+            }
+            
+            document.getElementById('alertsCount').textContent = data.alerts_count;
+            document.getElementById('blockedIPsCount').textContent = data.blocked_ips_count;
+        })
+        .catch(error => {
+            console.error('Error fetching engine status:', error);
+        });
+}
+
+function startEngine() {
+    fetch('/api/start_engine')
+        .then(response => response.json())
+        .then(data => {
+            const messageElement = document.getElementById('engineMessage');
+            if (data.status === 'success') {
+                messageElement.innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+            } else {
+                messageElement.innerHTML = '<div class="alert alert-warning">' + data.message + '</div>';
+            }
+            setTimeout(() => {
+                updateEngineStatus();
+                messageElement.innerHTML = '';
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error starting engine:', error);
+            document.getElementById('engineMessage').innerHTML = '<div class="alert alert-danger">Error starting engine</div>';
+        });
+}
+
+function stopEngine() {
+    fetch('/api/stop_engine')
+        .then(response => response.json())
+        .then(data => {
+            const messageElement = document.getElementById('engineMessage');
+            if (data.status === 'success') {
+                messageElement.innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+            } else {
+                messageElement.innerHTML = '<div class="alert alert-warning">' + data.message + '</div>';
+            }
+            setTimeout(() => {
+                updateEngineStatus();
+                messageElement.innerHTML = '';
+            }, 2000);
+        })
+        .catch(error => {
+            console.error('Error stopping engine:', error);
+            document.getElementById('engineMessage').innerHTML = '<div class="alert alert-danger">Error stopping engine</div>';
+        });
+}
+
+// Update status every 5 seconds
+setInterval(updateEngineStatus, 5000);
+
+// Initial status update
+updateEngineStatus();
+</script>
+{% endblock %} 

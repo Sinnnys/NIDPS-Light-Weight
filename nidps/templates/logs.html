@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-file-alt"></i> System Logs
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshLogs()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Level</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                {% for log in logs %}
+                                <tr>
+                                    <td>{{ log.split(' - ')[0] if ' - ' in log else 'Unknown' }}</td>
+                                    <td>
+                                        {% if 'ERROR' in log %}
+                                            <span class="badge badge-danger">ERROR</span>
+                                        {% elif 'WARNING' in log %}
+                                            <span class="badge badge-warning">WARNING</span>
+                                        {% elif 'INFO' in log %}
+                                            <span class="badge badge-info">INFO</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">LOG</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.split(' - ')[-1] if ' - ' in log else log }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function refreshLogs() {
+    location.reload();
+}
+
+// Auto-refresh logs every 30 seconds
+setInterval(function() {
+    refreshLogs();
+}, 30000);
+</script>
+{% endblock %} 
