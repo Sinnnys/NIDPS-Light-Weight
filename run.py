@@ -10,24 +10,8 @@ from nidps import create_app, db
 from nidps.auth.models import User, Role
 import click
 
-def main():
-    # Ensure we're in the right directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(script_dir)
-    
-    # Create the Flask application
-    app = create_app()
-    
-    print("=== NIDPS - Network Intrusion Detection and Prevention System ===")
-    print("Starting web interface...")
-    print("The application will be available at: http://127.0.0.1:5000")
-    print("Note: Packet sniffing features require root privileges.")
-    print("You can start/stop the engine from the web interface.")
-    print("Press Ctrl+C to stop the application.")
-    print("=" * 70)
-    
-    # Run the Flask application
-    app.run(host='0.0.0.0', port=5000, debug=False)
+# Create the Flask application
+app = create_app()
 
 @app.cli.command("seed")
 def seed():
@@ -53,8 +37,22 @@ def seed():
     db.session.commit()
     print("Database seeded!")
 
+def main():
+    # Ensure we're in the right directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(script_dir)
+    
+    print("=== NIDPS - Network Intrusion Detection and Prevention System ===")
+    print("Starting web interface...")
+    print("The application will be available at: http://127.0.0.1:5000")
+    print("Note: Packet sniffing features require root privileges.")
+    print("You can start/stop the engine from the web interface.")
+    print("Press Ctrl+C to stop the application.")
+    print("=" * 70)
+    
+    # Run the Flask application
+    app.run(host='0.0.0.0', port=5000, debug=False)
 
-@app.shell_context_processor
 def make_shell_context():
     return {'db': db, 'User': User, 'Role': Role}
 

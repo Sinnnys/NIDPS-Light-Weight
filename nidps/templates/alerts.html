@@ -1,45 +1,263 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Alerts</h1>
-    <p>This page shows the latest alerts from the NIDPS. It will auto-refresh.</p>
-    
-    <ul id="alert-list">
-        {# Initial alerts can be loaded here if desired, or just wait for the poller #}
-        {% if alerts %}
-            {% for alert in alerts %}
-                <li>{{ alert }}</li>
-            {% endfor %}
-        {% endif %}
-    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-exclamation-triangle"></i> Security Alerts
+                    </h3>
+                    <div class="card-tools">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="filterAlerts('high')">
+                                <i class="fas fa-exclamation-circle"></i> High
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="filterAlerts('medium')">
+                                <i class="fas fa-exclamation-triangle"></i> Medium
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="filterAlerts('low')">
+                                <i class="fas fa-info-circle"></i> Low
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="filterAlerts('all')">
+                                <i class="fas fa-list"></i> All
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary ml-2" onclick="refreshAlerts()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert-stats mb-3">
+                        <span class="badge badge-danger mr-2" id="high-count">0 High</span>
+                        <span class="badge badge-warning mr-2" id="medium-count">0 Medium</span>
+                        <span class="badge badge-info mr-2" id="low-count">0 Low</span>
+                        <span class="badge badge-secondary" id="total-count">0 Total</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Severity</th>
+                                    <th>Source IP</th>
+                                    <th>Rule</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alert-list">
+                                {% if alerts %}
+                                    {% for alert in alerts %}
+                                        <tr class="alert-row" data-severity="{{ alert.severity }}">
+                                            <td>{{ alert.timestamp }}</td>
+                                            <td>
+                                                {% if alert.severity == 'high' %}
+                                                    <span class="badge badge-danger">HIGH</span>
+                                                {% elif alert.severity == 'medium' %}
+                                                    <span class="badge badge-warning">MEDIUM</span>
+                                                {% else %}
+                                                    <span class="badge badge-info">LOW</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ alert.source_ip }}</td>
+                                            <td>{{ alert.details.rule_name if alert.details else 'Unknown' }}</td>
+                                            <td>
+                                                {% if alert.action == 'block' %}
+                                                    <span class="badge badge-danger">BLOCK</span>
+                                                {% else %}
+                                                    <span class="badge badge-secondary">LOG</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="showAlertDetails('{{ loop.index0 }}')">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert Details Modal -->
+<div class="modal fade" id="alertDetailsModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Alert Details</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="alertDetailsContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
+    let currentFilter = 'all';
+    let allAlerts = [];
+
     document.addEventListener('DOMContentLoaded', function() {
-        const alertList = document.getElementById('alert-list');
-
-        async function fetchAlerts() {
-            try {
-                const response = await fetch("{{ url_for('web.api_alerts') }}");
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const newAlerts = await response.json();
-                
-                if (newAlerts.length > 0) {
-                    newAlerts.forEach(alertText => {
-                        const li = document.createElement('li');
-                        li.textContent = alertText;
-                        // Add to the top of the list
-                        alertList.insertBefore(li, alertList.firstChild);
-                    });
-                }
-            } catch (error) {
-                console.error('There has been a problem with your fetch operation:', error);
-            }
-        }
-
+        // Initialize with current alerts
+        updateAlertCounts();
+        
         // Poll for new alerts every 5 seconds
         setInterval(fetchAlerts, 5000);
     });
+
+    function filterAlerts(severity) {
+        currentFilter = severity;
+        const rows = document.querySelectorAll('.alert-row');
+        
+        rows.forEach(row => {
+            const rowSeverity = row.getAttribute('data-severity');
+            if (severity === 'all' || rowSeverity === severity) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update active filter button
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+
+    function updateAlertCounts() {
+        const rows = document.querySelectorAll('.alert-row');
+        let highCount = 0, mediumCount = 0, lowCount = 0;
+        
+        rows.forEach(row => {
+            const severity = row.getAttribute('data-severity');
+            if (severity === 'high') highCount++;
+            else if (severity === 'medium') mediumCount++;
+            else if (severity === 'low') lowCount++;
+        });
+        
+        document.getElementById('high-count').textContent = `${highCount} High`;
+        document.getElementById('medium-count').textContent = `${mediumCount} Medium`;
+        document.getElementById('low-count').textContent = `${lowCount} Low`;
+        document.getElementById('total-count').textContent = `${rows.length} Total`;
+    }
+
+    async function fetchAlerts() {
+        try {
+            const response = await fetch("{{ url_for('web.api_alerts') }}");
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const newAlerts = await response.json();
+            
+            if (newAlerts.length > 0) {
+                newAlerts.forEach(alert => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'alert-row';
+                    tr.setAttribute('data-severity', alert.severity);
+                    
+                    const severityBadge = alert.severity === 'high' ? 
+                        '<span class="badge badge-danger">HIGH</span>' :
+                        alert.severity === 'medium' ? 
+                        '<span class="badge badge-warning">MEDIUM</span>' :
+                        '<span class="badge badge-info">LOW</span>';
+                    
+                    const actionBadge = alert.action === 'block' ?
+                        '<span class="badge badge-danger">BLOCK</span>' :
+                        '<span class="badge badge-secondary">LOG</span>';
+                    
+                    tr.innerHTML = `
+                        <td>${alert.timestamp}</td>
+                        <td>${severityBadge}</td>
+                        <td>${alert.source_ip}</td>
+                        <td>${alert.details?.rule_name || 'Unknown'}</td>
+                        <td>${actionBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="showAlertDetails('${allAlerts.length}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    `;
+                    
+                    // Add to the top of the table
+                    const tbody = document.getElementById('alert-list');
+                    tbody.insertBefore(tr, tbody.firstChild);
+                    
+                    allAlerts.push(alert);
+                });
+                
+                updateAlertCounts();
+            }
+        } catch (error) {
+            console.error('There has been a problem with your fetch operation:', error);
+        }
+    }
+
+    function showAlertDetails(index) {
+        const alert = allAlerts[index];
+        if (!alert) return;
+        
+        const content = document.getElementById('alertDetailsContent');
+        content.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Basic Information</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Timestamp:</strong></td><td>${alert.timestamp}</td></tr>
+                        <tr><td><strong>Severity:</strong></td><td>${alert.severity.toUpperCase()}</td></tr>
+                        <tr><td><strong>Source IP:</strong></td><td>${alert.source_ip}</td></tr>
+                        <tr><td><strong>Action:</strong></td><td>${alert.action.toUpperCase()}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6>Rule Details</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Rule Name:</strong></td><td>${alert.details?.rule_name || 'Unknown'}</td></tr>
+                        <tr><td><strong>Protocol:</strong></td><td>${alert.details?.protocol || 'Unknown'}</td></tr>
+                        <tr><td><strong>Source Port:</strong></td><td>${alert.details?.source_port || 'Unknown'}</td></tr>
+                        <tr><td><strong>Dest Port:</strong></td><td>${alert.details?.dest_port || 'Unknown'}</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Message</h6>
+                    <div class="alert alert-info">${alert.message}</div>
+                </div>
+            </div>
+            ${alert.dpi_result ? `
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Deep Packet Inspection Results</h6>
+                    <div class="alert alert-warning">
+                        <strong>Risk Score:</strong> ${alert.dpi_result.risk_score}<br>
+                        <strong>Application:</strong> ${alert.dpi_result.application}<br>
+                        <strong>Threats:</strong> ${alert.dpi_result.threats.length}<br>
+                        <strong>Signatures:</strong> ${alert.dpi_result.signatures.length}
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+        `;
+        
+        $('#alertDetailsModal').modal('show');
+    }
+
+    function refreshAlerts() {
+        location.reload();
+    }
 </script>
 {% endblock %} 

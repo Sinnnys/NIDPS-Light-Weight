@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-wrench"></i> System Configuration
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Engine Control -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-cogs"></i> Engine Control
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Engine Status</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="engine-status" readonly value="Stopped">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-success" onclick="startEngine()">
+                                                            <i class="fas fa-play"></i> Start
+                                                        </button>
+                                                        <button class="btn btn-danger" onclick="stopEngine()">
+                                                            <i class="fas fa-stop"></i> Stop
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Interface</label>
+                                                <select class="form-control" id="interface-select">
+                                                    <option value="">Auto-detect</option>
+                                                    <option value="eth0">eth0</option>
+                                                    <option value="wlan0">wlan0</option>
+                                                    <option value="lo">lo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-bell"></i> Notification Settings
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="email-notifications" checked>
+                                            <label class="custom-control-label" for="email-notifications">Email Notifications</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="slack-notifications">
+                                            <label class="custom-control-label" for="slack-notifications">Slack Notifications</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="webhook-notifications">
+                                            <label class="custom-control-label" for="webhook-notifications">Webhook Notifications</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Notification Level</label>
+                                        <select class="form-control" id="notification-level">
+                                            <option value="all">All Alerts</option>
+                                            <option value="high">High Priority Only</option>
+                                            <option value="medium">Medium and High</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-shield-alt"></i> Security Settings
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="auto-block" checked>
+                                            <label class="custom-control-label" for="auto-block">Auto-block Suspicious IPs</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="deep-inspection" checked>
+                                            <label class="custom-control-label" for="deep-inspection">Deep Packet Inspection</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="auto-recovery" checked>
+                                            <label class="custom-control-label" for="auto-recovery">Auto-recovery Mode</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Block Duration (minutes)</label>
+                                        <input type="number" class="form-control" id="block-duration" value="30" min="1" max="1440">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logging Settings -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-file-alt"></i> Logging Settings
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Log Level</label>
+                                                <select class="form-control" id="log-level">
+                                                    <option value="DEBUG">Debug</option>
+                                                    <option value="INFO" selected>Info</option>
+                                                    <option value="WARNING">Warning</option>
+                                                    <option value="ERROR">Error</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Log Retention (days)</label>
+                                                <input type="number" class="form-control" id="log-retention" value="30" min="1" max="365">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Max Log Size (MB)</label>
+                                                <input type="number" class="form-control" id="max-log-size" value="100" min="1" max="1000">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="log-all-packets">
+                                            <label class="custom-control-label" for="log-all-packets">Log All Packets</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="button" class="btn btn-primary btn-lg" onclick="saveConfiguration()">
+                                <i class="fas fa-save"></i> Save Configuration
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-lg ml-2" onclick="resetConfiguration()">
+                                <i class="fas fa-undo"></i> Reset to Defaults
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadConfiguration();
+    updateEngineStatus();
+    // Update engine status every 10 seconds
+    setInterval(updateEngineStatus, 10000);
+});
+
+function loadConfiguration() {
+    // Load saved configuration from localStorage or server
+    const config = JSON.parse(localStorage.getItem('nidps_config') || '{}');
+    
+    // Apply saved settings
+    document.getElementById('email-notifications').checked = config.email_notifications !== false;
+    document.getElementById('slack-notifications').checked = config.slack_notifications || false;
+    document.getElementById('webhook-notifications').checked = config.webhook_notifications || false;
+    document.getElementById('notification-level').value = config.notification_level || 'all';
+    document.getElementById('auto-block').checked = config.auto_block !== false;
+    document.getElementById('deep-inspection').checked = config.deep_inspection !== false;
+    document.getElementById('auto-recovery').checked = config.auto_recovery !== false;
+    document.getElementById('block-duration').value = config.block_duration || 30;
+    document.getElementById('log-level').value = config.log_level || 'INFO';
+    document.getElementById('log-retention').value = config.log_retention || 30;
+    document.getElementById('max-log-size').value = config.max_log_size || 100;
+    document.getElementById('log-all-packets').checked = config.log_all_packets || false;
+}
+
+function saveConfiguration() {
+    const config = {
+        email_notifications: document.getElementById('email-notifications').checked,
+        slack_notifications: document.getElementById('slack-notifications').checked,
+        webhook_notifications: document.getElementById('webhook-notifications').checked,
+        notification_level: document.getElementById('notification-level').value,
+        auto_block: document.getElementById('auto-block').checked,
+        deep_inspection: document.getElementById('deep-inspection').checked,
+        auto_recovery: document.getElementById('auto-recovery').checked,
+        block_duration: parseInt(document.getElementById('block-duration').value),
+        log_level: document.getElementById('log-level').value,
+        log_retention: parseInt(document.getElementById('log-retention').value),
+        max_log_size: parseInt(document.getElementById('max-log-size').value),
+        log_all_packets: document.getElementById('log-all-packets').checked
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('nidps_config', JSON.stringify(config));
+    
+    // Show success message
+    showAlert('Configuration saved successfully!', 'success');
+}
+
+function resetConfiguration() {
+    if (confirm('Are you sure you want to reset all configuration to defaults?')) {
+        localStorage.removeItem('nidps_config');
+        loadConfiguration();
+        showAlert('Configuration reset to defaults!', 'info');
+    }
+}
+
+async function startEngine() {
+    try {
+        const response = await fetch("{{ url_for('web.api_start_engine') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showAlert(result.message, 'success');
+            updateEngineStatus();
+        } else {
+            showAlert('Failed to start engine', 'danger');
+        }
+    } catch (error) {
+        showAlert('Error starting engine: ' + error.message, 'danger');
+    }
+}
+
+async function stopEngine() {
+    try {
+        const response = await fetch("{{ url_for('web.api_stop_engine') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showAlert(result.message, 'success');
+            updateEngineStatus();
+        } else {
+            showAlert('Failed to stop engine', 'danger');
+        }
+    } catch (error) {
+        showAlert('Error stopping engine: ' + error.message, 'danger');
+    }
+}
+
+async function updateEngineStatus() {
+    try {
+        const response = await fetch("{{ url_for('web.api_engine_status') }}");
+        if (response.ok) {
+            const status = await response.json();
+            const statusField = document.getElementById('engine-status');
+            statusField.value = status.running ? 'Running' : 'Stopped';
+            statusField.className = status.running ? 'form-control text-success' : 'form-control text-danger';
+        }
+    } catch (error) {
+        console.error('Error updating engine status:', error);
+    }
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    `;
+    
+    // Insert at the top of the card body
+    const cardBody = document.querySelector('.card-body');
+    cardBody.insertBefore(alertDiv, cardBody.firstChild);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %} 

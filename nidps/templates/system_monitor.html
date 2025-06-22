@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-tachometer-alt"></i> System Resource Monitor
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshSystemStats()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- System Overview -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-microchip"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">CPU Usage</span>
+                                    <span class="info-box-number" id="cpu-usage">0%</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" id="cpu-progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-memory"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Memory Usage</span>
+                                    <span class="info-box-number" id="memory-usage">0%</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" id="memory-progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-hdd"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Disk Usage</span>
+                                    <span class="info-box-number" id="disk-usage">0%</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" id="disk-progress" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-network-wired"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Network</span>
+                                    <span class="info-box-number" id="network-status">Active</span>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NIDPS Process Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-shield-alt"></i> NIDPS Process Information
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-sm">
+                                                <tr>
+                                                    <td><strong>Process ID:</strong></td>
+                                                    <td id="nidps-pid">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Status:</strong></td>
+                                                    <td id="nidps-status">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Uptime:</strong></td>
+                                                    <td id="nidps-uptime">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Memory Used:</strong></td>
+                                                    <td id="nidps-memory">-</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-sm">
+                                                <tr>
+                                                    <td><strong>Engine Status:</strong></td>
+                                                    <td id="engine-status">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Sniffer Status:</strong></td>
+                                                    <td id="sniffer-status">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Analytics Status:</strong></td>
+                                                    <td id="analytics-status">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Auto-Recovery:</strong></td>
+                                                    <td id="recovery-status">-</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-heartbeat"></i> System Health
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="health-indicators">
+                                        <!-- Health indicators will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Running Processes -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-list"></i> Top Processes
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>PID</th>
+                                                    <th>Name</th>
+                                                    <th>CPU %</th>
+                                                    <th>Memory %</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="process-list">
+                                                <!-- Process list will be populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.info-box {
+    display: flex;
+    min-height: 80px;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.info-box-icon {
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.875rem;
+    font-weight: 300;
+    text-align: center;
+    width: 70px;
+    color: #fff;
+}
+
+.info-box-content {
+    padding: 5px 10px;
+    flex: 1;
+}
+
+.info-box-text {
+    display: block;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info-box-number {
+    display: block;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.progress {
+    height: 3px;
+    margin: 5px 0;
+}
+
+.health-indicator {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.health-good { background-color: #28a745; }
+.health-warning { background-color: #ffc107; color: #212529; }
+.health-critical { background-color: #dc3545; }
+</style>
+
+<script>
+let systemStatsInterval;
+
+document.addEventListener('DOMContentLoaded', function() {
+    refreshSystemStats();
+    // Update every 10 seconds
+    systemStatsInterval = setInterval(refreshSystemStats, 10000);
+});
+
+function refreshSystemStats() {
+    fetchSystemStats();
+    fetchNIDPSStats();
+    fetchProcessList();
+}
+
+async function fetchSystemStats() {
+    try {
+        const response = await fetch("{{ url_for('web.api_system_stats') }}");
+        if (response.ok) {
+            const stats = await response.json();
+            updateSystemStats(stats);
+        }
+    } catch (error) {
+        console.error('Error fetching system stats:', error);
+    }
+}
+
+async function fetchNIDPSStats() {
+    try {
+        const response = await fetch("{{ url_for('web.api_nidps_stats') }}");
+        if (response.ok) {
+            const stats = await response.json();
+            updateNIDPSStats(stats);
+        }
+    } catch (error) {
+        console.error('Error fetching NIDPS stats:', error);
+    }
+}
+
+async function fetchProcessList() {
+    try {
+        const response = await fetch("{{ url_for('web.api_process_list') }}");
+        if (response.ok) {
+            const processes = await response.json();
+            updateProcessList(processes);
+        }
+    } catch (error) {
+        console.error('Error fetching process list:', error);
+    }
+}
+
+function updateSystemStats(stats) {
+    // Update CPU
+    document.getElementById('cpu-usage').textContent = `${stats.cpu_percent}%`;
+    document.getElementById('cpu-progress').style.width = `${stats.cpu_percent}%`;
+    
+    // Update Memory
+    document.getElementById('memory-usage').textContent = `${stats.memory_percent}%`;
+    document.getElementById('memory-progress').style.width = `${stats.memory_percent}%`;
+    
+    // Update Disk
+    document.getElementById('disk-usage').textContent = `${stats.disk_percent}%`;
+    document.getElementById('disk-progress').style.width = `${stats.disk_percent}%`;
+    
+    // Update health indicators
+    updateHealthIndicators(stats);
+}
+
+function updateNIDPSStats(stats) {
+    document.getElementById('nidps-pid').textContent = stats.pid || 'N/A';
+    document.getElementById('nidps-status').textContent = stats.status || 'Unknown';
+    document.getElementById('nidps-uptime').textContent = stats.uptime || 'N/A';
+    document.getElementById('nidps-memory').textContent = stats.memory_usage || 'N/A';
+    
+    document.getElementById('engine-status').textContent = stats.engine_running ? 'Running' : 'Stopped';
+    document.getElementById('sniffer-status').textContent = stats.sniffer_active ? 'Active' : 'Inactive';
+    document.getElementById('analytics-status').textContent = stats.analytics_active ? 'Active' : 'Inactive';
+    document.getElementById('recovery-status').textContent = stats.recovery_active ? 'Active' : 'Inactive';
+}
+
+function updateProcessList(processes) {
+    const tbody = document.getElementById('process-list');
+    tbody.innerHTML = '';
+    
+    processes.forEach(process => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${process.pid}</td>
+            <td>${process.name}</td>
+            <td>${process.cpu_percent.toFixed(1)}%</td>
+            <td>${process.memory_percent.toFixed(1)}%</td>
+            <td><span class="badge badge-success">${process.status}</span></td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function updateHealthIndicators(stats) {
+    const container = document.getElementById('health-indicators');
+    container.innerHTML = '';
+    
+    // CPU Health
+    const cpuHealth = stats.cpu_percent > 80 ? 'critical' : stats.cpu_percent > 60 ? 'warning' : 'good';
+    container.innerHTML += `<span class="health-indicator health-${cpuHealth}">CPU: ${stats.cpu_percent}%</span>`;
+    
+    // Memory Health
+    const memoryHealth = stats.memory_percent > 85 ? 'critical' : stats.memory_percent > 70 ? 'warning' : 'good';
+    container.innerHTML += `<span class="health-indicator health-${memoryHealth}">Memory: ${stats.memory_percent}%</span>`;
+    
+    // Disk Health
+    const diskHealth = stats.disk_percent > 90 ? 'critical' : stats.disk_percent > 80 ? 'warning' : 'good';
+    container.innerHTML += `<span class="health-indicator health-${diskHealth}">Disk: ${stats.disk_percent}%</span>`;
+    
+    // Network Health
+    container.innerHTML += `<span class="health-indicator health-good">Network: Active</span>`;
+}
+</script>
+{% endblock %} 

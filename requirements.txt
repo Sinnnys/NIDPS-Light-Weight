@@ -6,4 +6,16 @@ Flask-WTF
 werkzeug
 scapy
 python-dotenv
-psycopg2-binary 
+psycopg2-binary
+flask-socketio
+cryptography
+bcrypt
+numpy
+pandas
+matplotlib
+plotly
+requests
+schedule
+redis
+celery
+psutil 

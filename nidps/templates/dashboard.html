@@ -147,7 +147,12 @@ function updateEngineStatus() {
 }
 
 function startEngine() {
-    fetch('/api/start_engine')
+    fetch('/api/start_engine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
         .then(response => response.json())
         .then(data => {
             const messageElement = document.getElementById('engineMessage');
@@ -168,7 +173,12 @@ function startEngine() {
 }
 
 function stopEngine() {
-    fetch('/api/stop_engine')
+    fetch('/api/stop_engine', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
         .then(response => response.json())
         .then(data => {
             const messageElement = document.getElementById('engineMessage');
@@ -188,8 +198,8 @@ function stopEngine() {
         });
 }
 
-// Update status every 5 seconds
-setInterval(updateEngineStatus, 5000);
+// Update status every 10 seconds
+setInterval(updateEngineStatus, 10000);
 
 // Initial status update
 updateEngineStatus();

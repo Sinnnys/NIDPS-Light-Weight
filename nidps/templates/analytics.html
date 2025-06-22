@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-chart-line"></i> Network Analytics
+                    </h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshAnalytics()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Analytics Overview -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box bg-primary">
+                                <span class="info-box-icon"><i class="fas fa-chart-bar"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Packets</span>
+                                    <span class="info-box-number" id="total-packets">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-success">
+                                <span class="info-box-icon"><i class="fas fa-shield-alt"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Threats Detected</span>
+                                    <span class="info-box-number" id="threats-detected">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-warning">
+                                <span class="info-box-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Anomalies</span>
+                                    <span class="info-box-number" id="anomalies">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box bg-info">
+                                <span class="info-box-icon"><i class="fas fa-network-wired"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Active Connections</span>
+                                    <span class="info-box-number" id="active-connections">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Traffic Patterns -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-pie"></i> Top Source IPs
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="top-sources">
+                                        <p class="text-muted">No data available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-pie"></i> Top Destination IPs
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="top-destinations">
+                                        <p class="text-muted">No data available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Protocol Distribution -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-bar"></i> Protocol Distribution
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="protocol-distribution">
+                                        <p class="text-muted">No data available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-line"></i> Traffic Over Time
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="traffic-timeline">
+                                        <p class="text-muted">No data available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Anomaly Scores -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-exclamation-triangle"></i> Anomaly Detection
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="anomaly-scores">
+                                        <p class="text-muted">No anomaly data available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let analyticsInterval;
+
+document.addEventListener('DOMContentLoaded', function() {
+    refreshAnalytics();
+    // Update every 30 seconds
+    analyticsInterval = setInterval(refreshAnalytics, 30000);
+});
+
+function refreshAnalytics() {
+    fetchAnalyticsData();
+}
+
+async function fetchAnalyticsData() {
+    try {
+        const response = await fetch("{{ url_for('web.api_analytics_data') }}");
+        if (response.ok) {
+            const data = await response.json();
+            updateAnalyticsDisplay(data);
+        }
+    } catch (error) {
+        console.error('Error fetching analytics data:', error);
+    }
+}
+
+function updateAnalyticsDisplay(data) {
+    // Update overview stats
+    document.getElementById('total-packets').textContent = data.traffic_patterns?.total_packets || 0;
+    document.getElementById('threats-detected').textContent = data.traffic_patterns?.threats || 0;
+    document.getElementById('anomalies').textContent = data.anomaly_scores?.total_anomalies || 0;
+    document.getElementById('active-connections').textContent = data.traffic_patterns?.active_connections || 0;
+
+    // Update top sources
+    const topSourcesDiv = document.getElementById('top-sources');
+    if (data.top_sources && data.top_sources.length > 0) {
+        let sourcesHtml = '<div class="list-group list-group-flush">';
+        data.top_sources.slice(0, 5).forEach(source => {
+            sourcesHtml += `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>${source.ip}</span>
+                    <span class="badge badge-primary badge-pill">${source.count}</span>
+                </div>
+            `;
+        });
+        sourcesHtml += '</div>';
+        topSourcesDiv.innerHTML = sourcesHtml;
+    } else {
+        topSourcesDiv.innerHTML = '<p class="text-muted">No source data available</p>';
+    }
+
+    // Update top destinations
+    const topDestinationsDiv = document.getElementById('top-destinations');
+    if (data.top_destinations && data.top_destinations.length > 0) {
+        let destinationsHtml = '<div class="list-group list-group-flush">';
+        data.top_destinations.slice(0, 5).forEach(dest => {
+            destinationsHtml += `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>${dest.ip}</span>
+                    <span class="badge badge-success badge-pill">${dest.count}</span>
+                </div>
+            `;
+        });
+        destinationsHtml += '</div>';
+        topDestinationsDiv.innerHTML = destinationsHtml;
+    } else {
+        topDestinationsDiv.innerHTML = '<p class="text-muted">No destination data available</p>';
+    }
+
+    // Update protocol distribution
+    const protocolDiv = document.getElementById('protocol-distribution');
+    if (data.traffic_patterns?.protocols) {
+        let protocolHtml = '<div class="list-group list-group-flush">';
+        Object.entries(data.traffic_patterns.protocols).forEach(([protocol, count]) => {
+            protocolHtml += `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>${protocol}</span>
+                    <span class="badge badge-info badge-pill">${count}</span>
+                </div>
+            `;
+        });
+        protocolHtml += '</div>';
+        protocolDiv.innerHTML = protocolHtml;
+    } else {
+        protocolDiv.innerHTML = '<p class="text-muted">No protocol data available</p>';
+    }
+
+    // Update anomaly scores
+    const anomalyDiv = document.getElementById('anomaly-scores');
+    if (data.anomaly_scores && Object.keys(data.anomaly_scores).length > 0) {
+        let anomalyHtml = '<div class="row">';
+        Object.entries(data.anomaly_scores).forEach(([metric, score]) => {
+            const severity = score > 0.8 ? 'danger' : score > 0.5 ? 'warning' : 'success';
+            anomalyHtml += `
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">${metric}</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-${severity}" style="width: ${score * 100}%"></div>
+                            </div>
+                            <small class="text-muted">${(score * 100).toFixed(1)}%</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        anomalyHtml += '</div>';
+        anomalyDiv.innerHTML = anomalyHtml;
+    } else {
+        anomalyDiv.innerHTML = '<p class="text-muted">No anomaly data available</p>';
+    }
+}
+</script>
+{% endblock %} 
