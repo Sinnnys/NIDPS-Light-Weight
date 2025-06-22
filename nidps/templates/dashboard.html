@@ -122,28 +122,24 @@
 
 <script>
 function updateEngineStatus() {
-    fetch('/api/engine_status')
-        .then(response => response.json())
-        .then(data => {
-            const statusElement = document.getElementById('engineStatus');
-            const progressElement = document.getElementById('engineProgress');
-            
-            if (data.running) {
-                statusElement.innerHTML = '<span class="badge badge-success">Running</span>';
-                progressElement.className = 'progress-bar bg-success';
-                progressElement.style.width = '100%';
-            } else {
-                statusElement.innerHTML = '<span class="badge badge-danger">Stopped</span>';
-                progressElement.className = 'progress-bar bg-danger';
-                progressElement.style.width = '0%';
-            }
-            
-            document.getElementById('alertsCount').textContent = data.alerts_count;
-            document.getElementById('blockedIPsCount').textContent = data.blocked_ips_count;
-        })
-        .catch(error => {
-            console.error('Error fetching engine status:', error);
-        });
+    // Use centralized status system
+    NIDPSStatus.addListener(function(status) {
+        const statusElement = document.getElementById('engineStatus');
+        const progressElement = document.getElementById('engineProgress');
+        
+        if (status.running) {
+            statusElement.innerHTML = '<span class="badge badge-success">Running</span>';
+            progressElement.className = 'progress-bar bg-success';
+            progressElement.style.width = '100%';
+        } else {
+            statusElement.innerHTML = '<span class="badge badge-danger">Stopped</span>';
+            progressElement.className = 'progress-bar bg-danger';
+            progressElement.style.width = '0%';
+        }
+        
+        document.getElementById('alertsCount').textContent = status.alerts_count;
+        document.getElementById('blockedIPsCount').textContent = status.blocked_ips_count;
+    });
 }
 
 function startEngine() {
@@ -162,7 +158,7 @@ function startEngine() {
                 messageElement.innerHTML = '<div class="alert alert-warning">' + data.message + '</div>';
             }
             setTimeout(() => {
-                updateEngineStatus();
+                NIDPSStatus.updateStatus(); // Force immediate update
                 messageElement.innerHTML = '';
             }, 2000);
         })
@@ -188,7 +184,7 @@ function stopEngine() {
                 messageElement.innerHTML = '<div class="alert alert-warning">' + data.message + '</div>';
             }
             setTimeout(() => {
-                updateEngineStatus();
+                NIDPSStatus.updateStatus(); // Force immediate update
                 messageElement.innerHTML = '';
             }, 2000);
         })
@@ -198,10 +194,9 @@ function stopEngine() {
         });
 }
 
-// Update status every 10 seconds
-setInterval(updateEngineStatus, 10000);
-
-// Initial status update
-updateEngineStatus();
+// Initialize status display
+document.addEventListener('DOMContentLoaded', function() {
+    updateEngineStatus();
+});
 </script>
 {% endblock %} 

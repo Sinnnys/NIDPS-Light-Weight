@@ -245,8 +245,8 @@ let systemStatsInterval;
 
 document.addEventListener('DOMContentLoaded', function() {
     refreshSystemStats();
-    // Update every 10 seconds
-    systemStatsInterval = setInterval(refreshSystemStats, 10000);
+    // Update every 30 seconds instead of 10
+    systemStatsInterval = setInterval(refreshSystemStats, 30000);
 });
 
 function refreshSystemStats() {
@@ -293,15 +293,15 @@ async function fetchProcessList() {
 
 function updateSystemStats(stats) {
     // Update CPU
-    document.getElementById('cpu-usage').textContent = `${stats.cpu_percent}%`;
+    document.getElementById('cpu-usage').textContent = `${stats.cpu_percent.toFixed(1)}%`;
     document.getElementById('cpu-progress').style.width = `${stats.cpu_percent}%`;
     
     // Update Memory
-    document.getElementById('memory-usage').textContent = `${stats.memory_percent}%`;
+    document.getElementById('memory-usage').textContent = `${stats.memory_percent.toFixed(1)}%`;
     document.getElementById('memory-progress').style.width = `${stats.memory_percent}%`;
     
     // Update Disk
-    document.getElementById('disk-usage').textContent = `${stats.disk_percent}%`;
+    document.getElementById('disk-usage').textContent = `${stats.disk_percent.toFixed(1)}%`;
     document.getElementById('disk-progress').style.width = `${stats.disk_percent}%`;
     
     // Update health indicators
@@ -343,15 +343,15 @@ function updateHealthIndicators(stats) {
     
     // CPU Health
     const cpuHealth = stats.cpu_percent > 80 ? 'critical' : stats.cpu_percent > 60 ? 'warning' : 'good';
-    container.innerHTML += `<span class="health-indicator health-${cpuHealth}">CPU: ${stats.cpu_percent}%</span>`;
+    container.innerHTML += `<span class="health-indicator health-${cpuHealth}">CPU: ${stats.cpu_percent.toFixed(1)}%</span>`;
     
     // Memory Health
     const memoryHealth = stats.memory_percent > 85 ? 'critical' : stats.memory_percent > 70 ? 'warning' : 'good';
-    container.innerHTML += `<span class="health-indicator health-${memoryHealth}">Memory: ${stats.memory_percent}%</span>`;
+    container.innerHTML += `<span class="health-indicator health-${memoryHealth}">Memory: ${stats.memory_percent.toFixed(1)}%</span>`;
     
     // Disk Health
     const diskHealth = stats.disk_percent > 90 ? 'critical' : stats.disk_percent > 80 ? 'warning' : 'good';
-    container.innerHTML += `<span class="health-indicator health-${diskHealth}">Disk: ${stats.disk_percent}%</span>`;
+    container.innerHTML += `<span class="health-indicator health-${diskHealth}">Disk: ${stats.disk_percent.toFixed(1)}%</span>`;
     
     // Network Health
     container.innerHTML += `<span class="health-indicator health-good">Network: Active</span>`;

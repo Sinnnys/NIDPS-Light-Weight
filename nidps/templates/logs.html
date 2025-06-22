@@ -16,6 +16,14 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <!-- Performance Mode Notice -->
+                    <div id="performanceNotice" class="alert alert-info" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Performance Mode Active:</strong> Packet logging is disabled to reduce CPU usage. 
+                        To see detailed packet logs, go to <a href="{{ url_for('web.configuration') }}">Configuration → Performance Settings</a> 
+                        and enable "Log All Packets".
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -57,9 +65,28 @@ function refreshLogs() {
     location.reload();
 }
 
+// Check performance mode and show notice if needed
+function checkPerformanceMode() {
+    fetch('/api/performance_stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.performance_mode && !data.log_all_packets) {
+                document.getElementById('performanceNotice').style.display = 'block';
+            } else {
+                document.getElementById('performanceNotice').style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error checking performance mode:', error));
+}
+
 // Auto-refresh logs every 30 seconds
 setInterval(function() {
     refreshLogs();
 }, 30000);
+
+// Check performance mode on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkPerformanceMode();
+});
 </script>
 {% endblock %} 

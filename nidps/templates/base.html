@@ -131,6 +131,12 @@
                                 <i class="fas fa-wrench"></i> Configuration
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'auth.users' %}active{% endif %}" 
+                               href="{{ url_for('auth.users') }}">
+                                <i class="fas fa-users"></i> User Management
+                            </a>
+                        </li>
                         {% endif %}
                     </ul>
                 </div>
@@ -155,10 +161,20 @@
                                         <small class="text-muted">Role: {{ current_user.role.name if current_user.role else 'User' }}</small>
                                     </span>
                                     <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url_for('auth.change_password') }}">
+                                        <i class="fas fa-key"></i> Change Password
+                                    </a>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
                                         <i class="fas fa-sign-out-alt"></i> Logout
                                     </a>
                                 </div>
+                            </div>
+                            <div class="nav-item ml-2">
+                                <small class="text-light">
+                                    <i class="fas fa-server"></i> 
+                                    <span id="resource-indicator">Loading...</span>
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -187,5 +203,102 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Centralized Status Management -->
+    <script>
+    // Global status manager to reduce API calls
+    window.NIDPSStatus = {
+        status: null,
+        lastUpdate: 0,
+        updateInterval: 15000, // 15 seconds
+        listeners: [],
+        
+        // Register a callback to be notified of status updates
+        addListener: function(callback) {
+            this.listeners.push(callback);
+        },
+        
+        // Notify all listeners of status change
+        notifyListeners: function(status) {
+            this.listeners.forEach(callback => {
+                try {
+                    callback(status);
+                } catch (e) {
+                    console.error('Status listener error:', e);
+                }
+            });
+        },
+        
+        // Update status if needed
+        updateStatus: async function() {
+            const now = Date.now();
+            if (now - this.lastUpdate < this.updateInterval) {
+                return this.status;
+            }
+            
+            try {
+                const response = await fetch("{{ url_for('web.api_engine_status') }}");
+                if (response.ok) {
+                    const newStatus = await response.json();
+                    if (JSON.stringify(newStatus) !== JSON.stringify(this.status)) {
+                        this.status = newStatus;
+                        this.notifyListeners(newStatus);
+                    }
+                    this.lastUpdate = now;
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+            
+            return this.status;
+        },
+        
+        // Start periodic updates
+        startPolling: function() {
+            this.updateStatus();
+            setInterval(() => this.updateStatus(), this.updateInterval);
+        }
+    };
+    
+    // Start polling when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        NIDPSStatus.startPolling();
+        
+        // Update resource indicator
+        updateResourceIndicator();
+        setInterval(updateResourceIndicator, 60000); // Update every minute
+    });
+    
+    // Resource usage indicator
+    async function updateResourceIndicator() {
+        try {
+            const response = await fetch("{{ url_for('web.api_system_stats') }}");
+            if (response.ok) {
+                const stats = await response.json();
+                const indicator = document.getElementById('resource-indicator');
+                if (indicator) {
+                    const cpu = stats.cpu_percent || 0;
+                    const memory = stats.memory_percent || 0;
+                    
+                    let status = 'Normal';
+                    let color = 'text-success';
+                    
+                    if (cpu > 80 || memory > 85) {
+                        status = 'High';
+                        color = 'text-danger';
+                    } else if (cpu > 60 || memory > 70) {
+                        status = 'Moderate';
+                        color = 'text-warning';
+                    }
+                    
+                    indicator.innerHTML = `<span class="${color}">${status}</span>`;
+                    indicator.title = `CPU: ${cpu}% | Memory: ${memory}%`;
+                }
+            }
+        } catch (error) {
+            console.error('Error updating resource indicator:', error);
+        }
+    }
+    </script>
 </body>
 </html> 

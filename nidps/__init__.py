@@ -1,7 +1,7 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask
+from flask import Flask, jsonify
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -29,6 +29,19 @@ def create_app(config_class=Config):
 
     from nidps.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
+
+    # Error handlers for API routes
+    @app.errorhandler(500)
+    def internal_error(error):
+        return jsonify({'error': 'Internal server error', 'status': 'error'}), 500
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return jsonify({'error': 'Not found', 'status': 'error'}), 404
+
+    @app.errorhandler(403)
+    def forbidden_error(error):
+        return jsonify({'error': 'Forbidden', 'status': 'error'}), 403
 
     if not app.debug and not app.testing:
         if not os.path.exists('logs'):

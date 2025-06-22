@@ -148,8 +148,8 @@ let analyticsInterval;
 
 document.addEventListener('DOMContentLoaded', function() {
     refreshAnalytics();
-    // Update every 30 seconds
-    analyticsInterval = setInterval(refreshAnalytics, 30000);
+    // Update every 60 seconds instead of 30
+    analyticsInterval = setInterval(refreshAnalytics, 60000);
 });
 
 function refreshAnalytics() {

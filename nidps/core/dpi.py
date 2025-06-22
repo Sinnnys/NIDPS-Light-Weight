@@ -117,7 +117,10 @@ class DeepPacketInspector:
     
     def _inspect_tcp_packet(self, packet):
         """Inspect TCP packet"""
-        result = {}
+        result = {
+            'application': 'unknown',
+            'signatures': []
+        }
         tcp_layer = packet[TCP]
         
         # Determine application based on port
@@ -145,7 +148,10 @@ class DeepPacketInspector:
     
     def _inspect_udp_packet(self, packet):
         """Inspect UDP packet"""
-        result = {}
+        result = {
+            'application': 'unknown',
+            'signatures': []
+        }
         udp_layer = packet[UDP]
         
         # Determine application based on port
@@ -162,7 +168,10 @@ class DeepPacketInspector:
     
     def _inspect_ip_packet(self, packet):
         """Inspect IP packet"""
-        result = {}
+        result = {
+            'application': 'unknown',
+            'signatures': []
+        }
         ip_layer = packet[IP]
         
         # Check for fragmentation

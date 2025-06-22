@@ -13,6 +13,13 @@ from datetime import datetime, timedelta
 # Global engine instance
 engine = None
 
+def get_engine():
+    """Get the global engine instance or create a new one if needed."""
+    global engine
+    if engine is None:
+        engine = NIDPSEngine()
+    return engine
+
 @bp.route('/')
 @bp.route('/index')
 @login_required
@@ -23,7 +30,7 @@ def index():
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    engine = NIDPSEngine()
+    engine = get_engine()
     status = "Running" if engine.is_running else "Not Running"
     stats = engine.get_statistics()
     return render_template('dashboard.html', title='Dashboard', status=status, stats=stats)
@@ -32,51 +39,33 @@ def dashboard():
 @login_required
 def alerts():
     """Alerts page."""
-    # Get alerts from the engine if it exists
-    alerts_list = []
-    if engine and hasattr(engine, 'alerts'):
-        alerts_list = engine.alerts[-50:]  # Last 50 alerts
-    else:
-        # Fallback to creating a new engine instance
-        temp_engine = NIDPSEngine()
-        alerts_list = temp_engine.get_alerts()
-    
+    # Get alerts from the engine
+    engine = get_engine()
+    alerts_list = engine.get_alerts()
     return render_template('alerts.html', title='Alerts', alerts=alerts_list)
 
 @bp.route('/logs')
 @login_required
 def logs():
     """Logs page."""
-    # Get logs from the engine if it exists
-    logs_list = []
-    if engine and hasattr(engine, 'packet_logs'):
-        logs_list = engine.packet_logs[-100:]  # Last 100 logs
-    else:
-        # Fallback to creating a new engine instance
-        temp_engine = NIDPSEngine()
-        logs_list = temp_engine.get_logs()
-    
+    # Get logs from the engine
+    engine = get_engine()
+    logs_list = engine.get_logs()
     return render_template('logs.html', title='System Logs', logs=logs_list)
 
 @bp.route('/blocked_ips')
 @admin_required
 def blocked_ips():
     """Blocked IPs page."""
-    # Get blocked IPs from the engine if it exists
-    blocked_list = []
-    if engine and hasattr(engine, 'prevention_engine'):
-        blocked_list = list(engine.prevention_engine.blocked_ips)
-    else:
-        # Fallback to creating a new engine instance
-        temp_engine = NIDPSEngine()
-        blocked_list = temp_engine.get_blocked_ips()
-    
+    # Get blocked IPs from the engine
+    engine = get_engine()
+    blocked_list = engine.get_blocked_ips()
     return render_template('blocked_ips.html', title='Blocked IPs', blocked_ips=blocked_list)
 
 @bp.route('/unblock_ip/<ip>')
 @admin_required
 def unblock_ip(ip):
-    engine = NIDPSEngine()
+    engine = get_engine()
     if engine.prevention_engine.unblock_ip(ip):
         flash(f'IP {ip} has been unblocked.')
     else:
@@ -86,7 +75,7 @@ def unblock_ip(ip):
 @bp.route('/rules', methods=['GET', 'POST'])
 @admin_required
 def rules():
-    engine = NIDPSEngine()
+    engine = get_engine()
     all_rules = engine.get_rules()
 
     form = RuleForm()
@@ -126,12 +115,13 @@ def analytics_page():
     # Get analytics data if available
     analytics_data = {}
     try:
-        temp_engine = NIDPSEngine()
+        engine = get_engine()
+        stats = engine.get_statistics()
         analytics_data = {
-            'traffic_patterns': temp_engine.get_statistics().get('traffic_patterns', {}),
-            'anomaly_scores': temp_engine.get_statistics().get('anomaly_scores', {}),
-            'top_sources': temp_engine.get_statistics().get('top_sources', []),
-            'top_destinations': temp_engine.get_statistics().get('top_destinations', [])
+            'traffic_patterns': stats.get('traffic_patterns', {}),
+            'anomaly_scores': stats.get('anomaly_scores', {}),
+            'top_sources': stats.get('top_sources', []),
+            'top_destinations': stats.get('top_destinations', [])
         }
     except:
         pass
@@ -156,30 +146,22 @@ def configuration():
 def api_alerts():
     """API endpoint to get alerts."""
     try:
-        if engine and hasattr(engine, 'alerts'):
-            return jsonify(engine.alerts[-20:])  # Last 20 alerts
-        else:
-            # Fallback to creating a new engine instance
-            temp_engine = NIDPSEngine()
-            alerts = temp_engine.get_alerts()
-            return jsonify(alerts[-20:])
-    except:
-        return jsonify([])
+        engine = get_engine()
+        alerts = engine.get_alerts()
+        return jsonify(alerts[-20:])  # Last 20 alerts
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/logs')
 @login_required
 def api_logs():
     """API endpoint to get logs."""
     try:
-        if engine and hasattr(engine, 'packet_logs'):
-            return jsonify(engine.packet_logs[-50:])  # Last 50 logs
-        else:
-            # Fallback to creating a new engine instance
-            temp_engine = NIDPSEngine()
-            logs = temp_engine.get_logs()
-            return jsonify(logs[-50:])
-    except:
-        return jsonify([])
+        engine = get_engine()
+        logs = engine.get_logs()
+        return jsonify(logs[-50:])  # Last 50 logs
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/start_engine', methods=['POST'])
 @login_required
@@ -189,10 +171,10 @@ def api_start_engine():
     
     try:
         if engine is None:
-            # Start the main engine
             engine = NIDPSEngine()
+        
+        if not engine.is_running:
             engine.start()
-            
             return jsonify({'status': 'success', 'message': 'Engine started successfully'})
         else:
             return jsonify({'status': 'error', 'message': 'Engine is already running'})
@@ -206,9 +188,8 @@ def api_stop_engine():
     global engine
     
     try:
-        if engine:
+        if engine and engine.is_running:
             engine.stop()
-            engine = None
             return jsonify({'status': 'success', 'message': 'Engine stopped successfully'})
         else:
             return jsonify({'status': 'error', 'message': 'Engine is not running'})
@@ -220,27 +201,26 @@ def api_stop_engine():
 def api_engine_status():
     """API endpoint to get engine status."""
     try:
-        if engine:
-            return jsonify({
-                'running': engine.is_running,
-                'alerts_count': len(engine.get_alerts()) if hasattr(engine, 'get_alerts') else 0,
-                'logs_count': len(engine.get_logs()) if hasattr(engine, 'get_logs') else 0,
-                'blocked_ips_count': len(engine.get_blocked_ips()) if hasattr(engine, 'get_blocked_ips') else 0
-            })
-        else:
-            return jsonify({
-                'running': False,
-                'alerts_count': 0,
-                'logs_count': 0,
-                'blocked_ips_count': 0
-            })
-    except:
-        return jsonify({
-            'running': False,
-            'alerts_count': 0,
-            'logs_count': 0,
-            'blocked_ips_count': 0
-        })
+        engine = get_engine()
+        status = {
+            'running': engine.is_running,
+            'uptime': time.time() - engine.start_time if hasattr(engine, 'start_time') else 0,
+            'packets_processed': getattr(engine, 'packet_counter', 0),
+            'alerts_count': len(engine.alerts),
+            'blocked_ips_count': len(engine.get_blocked_ips()),
+            'performance_mode': getattr(engine, 'performance_mode', False),
+            'features': {
+                'detection': True,
+                'prevention': True,
+                'analytics': True,
+                'dpi': True,
+                'notifications': True,
+                'auto_recovery': True
+            }
+        }
+        return jsonify(status)
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/system_stats')
 @login_required
@@ -249,157 +229,294 @@ def api_system_stats():
     try:
         # CPU usage
         cpu_percent = psutil.cpu_percent(interval=1)
-        
         # Memory usage
         memory = psutil.virtual_memory()
-        memory_percent = memory.percent
-        
         # Disk usage
         disk = psutil.disk_usage('/')
-        disk_percent = (disk.used / disk.total) * 100
-        
-        return jsonify({
-            'cpu_percent': round(cpu_percent, 1),
-            'memory_percent': round(memory_percent, 1),
-            'disk_percent': round(disk_percent, 1),
-            'memory_total': f"{memory.total / (1024**3):.1f} GB",
-            'memory_used': f"{memory.used / (1024**3):.1f} GB",
-            'disk_total': f"{disk.total / (1024**3):.1f} GB",
-            'disk_used': f"{disk.used / (1024**3):.1f} GB"
-        })
+        # Network I/O
+        network = psutil.net_io_counters()
+        stats = {
+            'cpu': {
+                'percent': cpu_percent,
+                'count': psutil.cpu_count(),
+                'freq': psutil.cpu_freq()._asdict() if psutil.cpu_freq() else {}
+            },
+            'memory': {
+                'total': memory.total,
+                'available': memory.available,
+                'percent': memory.percent,
+                'used': memory.used,
+                'free': memory.free
+            },
+            'disk': {
+                'total': disk.total,
+                'used': disk.used,
+                'free': disk.free,
+                'percent': disk.percent
+            },
+            'network': {
+                'bytes_sent': network.bytes_sent,
+                'bytes_recv': network.bytes_recv,
+                'packets_sent': network.packets_sent,
+                'packets_recv': network.packets_recv
+            },
+            'timestamp': time.time(),
+            # Flat fields for frontend compatibility
+            'cpu_percent': cpu_percent,
+            'memory_percent': memory.percent,
+            'disk_percent': disk.percent,
+            'network_percent': 0  # Not a percent, but placeholder for compatibility
+        }
+        return jsonify(stats)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/nidps_stats')
 @login_required
 def api_nidps_stats():
     """API endpoint to get NIDPS-specific statistics."""
     try:
-        current_pid = os.getpid()
-        process = psutil.Process(current_pid)
+        engine = get_engine()
+        stats = engine.get_statistics()
         
-        # Get process info
-        memory_info = process.memory_info()
-        memory_usage = f"{memory_info.rss / (1024**2):.1f} MB"
+        # Add performance stats
+        performance_stats = {
+            'packet_counter': getattr(engine, 'packet_counter', 0),
+            'performance_mode': getattr(engine, 'performance_mode', False),
+            'packet_sampling_rate': getattr(engine, 'packet_sampling_rate', 1.0),
+            'dpi_sampling_rate': getattr(engine, 'dpi_sampling_rate', 1.0),
+            'log_all_packets': getattr(engine, 'log_all_packets', True),
+            'uptime': time.time() - getattr(engine, 'start_time', time.time())
+        }
         
-        # Calculate uptime
-        create_time = process.create_time()
-        uptime_seconds = time.time() - create_time
-        uptime = str(timedelta(seconds=int(uptime_seconds)))
+        # Combine stats
+        combined_stats = {
+            'engine_stats': stats,
+            'performance_stats': performance_stats,
+            'alerts_summary': {
+                'total': len(engine.alerts),
+                'high': len([a for a in engine.alerts if a.get('severity') == 'high']),
+                'medium': len([a for a in engine.alerts if a.get('severity') == 'medium']),
+                'low': len([a for a in engine.alerts if a.get('severity') == 'low'])
+            },
+            'blocked_ips': len(engine.get_blocked_ips()),
+            'rules_count': len(engine.get_rules())
+        }
         
-        return jsonify({
-            'pid': current_pid,
-            'status': 'Running',
-            'uptime': uptime,
-            'memory_usage': memory_usage,
-            'engine_running': engine.is_running if engine else False,
-            'sniffer_active': engine.is_running if engine else False,
-            'analytics_active': True,  # Default to True for now
-            'recovery_active': True   # Default to True for now
-        })
+        return jsonify(combined_stats)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/process_list')
 @login_required
 def api_process_list():
-    """API endpoint to get top processes by CPU usage."""
+    """API endpoint to get list of running processes."""
     try:
         processes = []
-        for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent', 'status']):
+        for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
             try:
-                proc_info = proc.info
-                if proc_info['cpu_percent'] > 0:  # Only include processes with CPU usage
-                    processes.append({
-                        'pid': proc_info['pid'],
-                        'name': proc_info['name'],
-                        'cpu_percent': proc_info['cpu_percent'],
-                        'memory_percent': proc_info['memory_percent'],
-                        'status': proc_info['status']
-                    })
+                processes.append(proc.info)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
-                continue
+                pass
         
-        # Sort by CPU usage and return top 10
-        processes.sort(key=lambda x: x['cpu_percent'], reverse=True)
-        return jsonify(processes[:10])
+        # Sort by CPU usage
+        processes.sort(key=lambda x: x['cpu_percent'] or 0, reverse=True)
+        
+        return jsonify(processes[:20])  # Top 20 processes
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/analytics_data')
 @login_required
 def api_analytics_data():
     """API endpoint to get analytics data."""
     try:
-        temp_engine = NIDPSEngine()
-        stats = temp_engine.get_statistics()
-        return jsonify({
+        engine = get_engine()
+        stats = engine.get_statistics()
+        
+        analytics_data = {
             'traffic_patterns': stats.get('traffic_patterns', {}),
             'anomaly_scores': stats.get('anomaly_scores', {}),
             'top_sources': stats.get('top_sources', []),
-            'top_destinations': stats.get('top_destinations', [])
-        })
-    except:
-        return jsonify({})
+            'top_destinations': stats.get('top_destinations', []),
+            'threat_analysis': stats.get('threat_analysis', {}),
+            'performance_metrics': {
+                'packets_processed': getattr(engine, 'packet_counter', 0),
+                'sampling_rate': getattr(engine, 'packet_sampling_rate', 1.0),
+                'performance_mode': getattr(engine, 'performance_mode', False)
+            }
+        }
+        
+        return jsonify(analytics_data)
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @bp.route('/api/block_ip', methods=['POST'])
 @login_required
 def api_block_ip():
     """API endpoint to block an IP address."""
-    data = request.get_json()
-    ip_address = data.get('ip_address')
-    
-    if not ip_address:
-        return jsonify({'status': 'error', 'message': 'IP address is required'})
-    
     try:
-        temp_engine = NIDPSEngine()
-        if hasattr(temp_engine, 'prevention_engine'):
-            temp_engine.prevention_engine.block_ip(ip_address)
+        data = request.get_json()
+        ip_address = data.get('ip')
+        
+        if not ip_address:
+            return jsonify({'status': 'error', 'message': 'IP address is required'})
+        
+        engine = get_engine()
+        if engine.prevention_engine.block_ip(ip_address):
             return jsonify({'status': 'success', 'message': f'IP {ip_address} blocked successfully'})
         else:
-            return jsonify({'status': 'error', 'message': 'Blocking functionality not available'})
+            return jsonify({'status': 'error', 'message': f'Failed to block IP {ip_address}'})
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f'Failed to block IP: {str(e)}'})
+        return jsonify({'status': 'error', 'message': str(e)})
 
 @bp.route('/api/unblock_ip', methods=['POST'])
 @login_required
 def api_unblock_ip():
     """API endpoint to unblock an IP address."""
-    data = request.get_json()
-    ip_address = data.get('ip_address')
-    
-    if not ip_address:
-        return jsonify({'status': 'error', 'message': 'IP address is required'})
-    
     try:
-        temp_engine = NIDPSEngine()
-        if hasattr(temp_engine, 'prevention_engine'):
-            temp_engine.prevention_engine.unblock_ip(ip_address)
+        data = request.get_json()
+        ip_address = data.get('ip')
+        
+        if not ip_address:
+            return jsonify({'status': 'error', 'message': 'IP address is required'})
+        
+        engine = get_engine()
+        if engine.prevention_engine.unblock_ip(ip_address):
             return jsonify({'status': 'success', 'message': f'IP {ip_address} unblocked successfully'})
         else:
-            return jsonify({'status': 'error', 'message': 'Unblocking functionality not available'})
+            return jsonify({'status': 'error', 'message': f'Failed to unblock IP {ip_address}'})
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f'Failed to unblock IP: {str(e)}'})
+        return jsonify({'status': 'error', 'message': str(e)})
 
 @bp.route('/delete_rule/<rule_name>')
 @admin_required
 def delete_rule(rule_name):
-    engine = NIDPSEngine()
-    rules = engine.get_rules()
-    
-    # Find and remove the rule
-    rule_to_delete = next((rule for rule in rules if rule['rule_name'] == rule_name), None)
-    if rule_to_delete:
-        rules.remove(rule_to_delete)
+    """Delete a detection rule."""
+    try:
+        engine = get_engine()
+        rules = engine.get_rules()
+        
+        # Find and remove the rule
+        rules = [rule for rule in rules if rule.get('rule_name') != rule_name]
         
         # Save back to file
         rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
         with open(rules_path, 'w') as f:
             json.dump({"rules": rules}, f, indent=4)
         
-        flash(f'Rule "{rule_name}" deleted.')
-    else:
-        flash(f'Rule "{rule_name}" not found.')
+        flash(f'Rule "{rule_name}" deleted successfully!')
+    except Exception as e:
+        flash(f'Failed to delete rule: {str(e)}')
+    
+    return redirect(url_for('web.rules'))
+
+@bp.route('/api/performance_stats')
+@login_required
+def api_performance_stats():
+    """API endpoint to get performance statistics."""
+    try:
+        engine = get_engine()
         
-    return redirect(url_for('web.rules')) 
+        stats = {
+            'performance_mode': getattr(engine, 'performance_mode', False),
+            'packet_sampling_rate': getattr(engine, 'packet_sampling_rate', 1.0),
+            'dpi_sampling_rate': getattr(engine, 'dpi_sampling_rate', 1.0),
+            'log_all_packets': getattr(engine, 'log_all_packets', True),
+            'packet_counter': getattr(engine, 'packet_counter', 0),
+            'uptime': time.time() - getattr(engine, 'start_time', time.time()),
+            'cpu_usage': psutil.cpu_percent(interval=1),
+            'memory_usage': psutil.virtual_memory().percent
+        }
+        
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+@bp.route('/api/set_performance_mode', methods=['POST'])
+@login_required
+def api_set_performance_mode():
+    """API endpoint to set performance mode."""
+    try:
+        data = request.get_json()
+        enabled = data.get('enabled', True)
+        
+        engine = get_engine()
+        engine.set_performance_mode(enabled)
+        
+        return jsonify({'status': 'success', 'message': f'Performance mode {"enabled" if enabled else "disabled"}'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+@bp.route('/api/set_packet_sampling', methods=['POST'])
+@login_required
+def api_set_packet_sampling():
+    """API endpoint to set packet sampling rate."""
+    try:
+        data = request.get_json()
+        rate = data.get('rate', 0.1)
+        
+        if not 0.01 <= rate <= 1.0:
+            return jsonify({'status': 'error', 'message': 'Sampling rate must be between 0.01 and 1.0'})
+        
+        engine = get_engine()
+        engine.set_packet_sampling_rate(rate)
+        
+        return jsonify({'status': 'success', 'message': f'Packet sampling rate set to {rate}'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+@bp.route('/api/set_logging_mode', methods=['POST'])
+@login_required
+def api_set_logging_mode():
+    """API endpoint to set logging mode."""
+    try:
+        data = request.get_json()
+        enabled = data.get('enabled', False)
+        
+        engine = get_engine()
+        engine.set_log_all_packets(enabled)
+        
+        return jsonify({'status': 'success', 'message': f'Packet logging {"enabled" if enabled else "disabled"}'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+@bp.route('/api/notification_settings')
+@login_required
+def api_notification_settings():
+    """API endpoint to get notification settings."""
+    try:
+        engine = get_engine()
+        config = engine.notification_manager.config
+        return jsonify(config)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+@bp.route('/api/system_health')
+@login_required
+def api_system_health():
+    """API endpoint to get system health status."""
+    try:
+        # Get system stats
+        cpu_percent = psutil.cpu_percent(interval=1)
+        memory_percent = psutil.virtual_memory().percent
+        disk_percent = psutil.disk_usage('/').percent
+        
+        # Determine health status
+        health_status = 'healthy'
+        if cpu_percent > 80 or memory_percent > 80 or disk_percent > 90:
+            health_status = 'warning'
+        if cpu_percent > 95 or memory_percent > 95 or disk_percent > 95:
+            health_status = 'critical'
+        
+        health_data = {
+            'status': health_status,
+            'cpu_percent': cpu_percent,
+            'memory_percent': memory_percent,
+            'disk_percent': disk_percent,
+            'timestamp': time.time()
+        }
+        
+        return jsonify(health_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}) 
