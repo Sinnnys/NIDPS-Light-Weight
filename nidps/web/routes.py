@@ -76,8 +76,7 @@ def unblock_ip(ip):
 @admin_required
 def rules():
     engine = get_engine()
-    all_rules = engine.get_rules()
-
+    
     form = RuleForm()
     if form.validate_on_submit():
         # Create new rule object
@@ -103,9 +102,14 @@ def rules():
         with open(rules_path, 'w') as f:
             json.dump({"rules": engine.get_rules()}, f, indent=4)
 
+        # Reload rules in the engine to ensure consistency
+        engine.reload_rules()
+
         flash('Rule added successfully!')
         return redirect(url_for('web.rules'))
 
+    # Get current rules (this will reload from file)
+    all_rules = engine.get_rules()
     return render_template('rules.html', title='Detection Rules', rules=all_rules, form=form)
 
 @bp.route('/analytics')
@@ -404,6 +408,9 @@ def delete_rule(rule_name):
         rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
         with open(rules_path, 'w') as f:
             json.dump({"rules": rules}, f, indent=4)
+        
+        # Reload rules in the engine to ensure consistency
+        engine.reload_rules()
         
         flash(f'Rule "{rule_name}" deleted successfully!')
     except Exception as e:

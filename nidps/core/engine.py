@@ -241,12 +241,20 @@ class NIDPSEngine:
             self.prevention_engine.unblock_ip(ip)
 
     def get_rules(self):
+        # Reload rules from file to ensure we have the latest version
+        self.detection_engine.rules = self.detection_engine.load_rules(self.detection_engine.rules_file)
         return self.detection_engine.rules
 
     def add_rule(self, rule):
         # This is a simple in-memory add. For persistence, we need to write back to the JSON file.
         self.detection_engine.rules.append(rule)
         self.logger.info(f"Rule added: {rule}")
+
+    def reload_rules(self):
+        """Reload rules from the rules file"""
+        self.detection_engine.rules = self.detection_engine.load_rules(self.detection_engine.rules_file)
+        self.logger.info("Rules reloaded from file")
+        return self.detection_engine.rules
 
     def get_logs(self):
         """Get recent logs from the log files and packet logs."""
