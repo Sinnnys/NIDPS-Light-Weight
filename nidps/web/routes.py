@@ -441,22 +441,52 @@ def api_unblock_ip():
 def delete_rule(rule_name):
     """Delete a detection rule."""
     try:
+        print(f"=== DELETING RULE ===")
+        print(f"Rule name to delete: {rule_name}")
+        
         engine = get_engine()
         rules = engine.get_rules()
+        print(f"Current rules count: {len(rules)}")
         
         # Find and remove the rule
+        original_count = len(rules)
         rules = [rule for rule in rules if rule.get('rule_name') != rule_name]
+        new_count = len(rules)
+        
+        if original_count == new_count:
+            print(f"❌ Rule '{rule_name}' not found in current rules")
+            flash(f'Rule "{rule_name}" not found!')
+            return redirect(url_for('web.rules'))
+        
+        print(f"Rules after deletion: {len(rules)}")
+        
+        # Save back to file using absolute path
+        rules_path = os.path.join(os.getcwd(), 'rules.json')
+        print(f"Rules file path: {rules_path}")
+        
+        # Read current file to preserve global settings
+        try:
+            with open(rules_path, 'r') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            data = {"rules": [], "global_settings": {}}
+        
+        # Update rules while preserving global settings
+        data['rules'] = rules
         
         # Save back to file
-        rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
         with open(rules_path, 'w') as f:
-            json.dump({"rules": rules}, f, indent=4)
+            json.dump(data, f, indent=4)
+        
+        print(f"Successfully saved {len(rules)} rules to file")
         
         # Reload rules in the engine to ensure consistency
         engine.reload_rules()
+        print("Engine rules reloaded successfully")
         
         flash(f'Rule "{rule_name}" deleted successfully!')
     except Exception as e:
+        print(f"Error deleting rule: {e}")
         flash(f'Failed to delete rule: {str(e)}')
     
     return redirect(url_for('web.rules'))
