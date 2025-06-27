@@ -58,3 +58,6 @@
 2025-06-23 05:54:13,387 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
 2025-06-23 05:56:17,984 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
 2025-06-23 05:56:20,957 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 10:29:55,246 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 10:30:13,001 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 10:30:39,709 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]

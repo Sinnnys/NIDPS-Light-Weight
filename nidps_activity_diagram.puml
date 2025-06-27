@@ -1,0 +1,111 @@
+@startuml NIDPS Activity Diagram
+!theme plain
+title Network Intrusion Detection and Prevention System (NIDPS) - Activity Diagram
+
+start
+
+:Initialize System;
+note right: Load configuration, setup database, initialize components
+
+:Start Web Interface;
+note right: Flask app on port 5000
+
+:User Authentication;
+if (Valid Credentials?) then (yes)
+  :Load Dashboard;
+  :Display System Status;
+  
+  :Start Detection Engine?;
+  if (User Starts Engine) then (yes)
+    :Initialize Packet Sniffer;
+    note right: Requires root privileges
+    
+    :Load Detection Rules;
+    note right: Parse rules.json
+    
+    :Start Real-time Monitoring;
+    
+    while (System Running?) is (yes)
+      :Capture Network Packet;
+      
+      :Deep Packet Inspection (DPI);
+      note right: Analyze payload, signatures
+      
+      :Apply Detection Rules;
+      note right: Check against JSON rules
+      
+      if (Threat Detected?) then (yes)
+        :Calculate Threat Score;
+        :Log Alert;
+        
+        if (Action Required?) then (block)
+          :Block IP Address;
+          note right: Using UFW firewall
+          :Set Dwell Time;
+          :Schedule Unblock;
+        else (log)
+          :Log Event;
+        endif
+        
+        :Send Notifications;
+        note right: Email, Slack, Webhooks
+        
+        :Update Analytics;
+        note right: Traffic patterns, anomaly detection
+        
+      else (no)
+        :Update Traffic Analytics;
+        note right: Protocol distribution, top IPs
+      endif
+      
+      :Check System Health;
+      if (Performance Issues?) then (yes)
+        :Enable Performance Mode;
+        note right: Reduce CPU usage 60-80%
+        :Adjust Packet Sampling;
+      endif
+      
+      :Monitor Resources;
+      note right: CPU, memory, process monitoring
+      
+    endwhile (no)
+    
+    :Stop Detection Engine;
+    :Cleanup Resources;
+    
+  else (no)
+    :Wait for User Action;
+    note right: User can start engine later
+  endif
+  
+  :User Management;
+  if (Admin User?) then (yes)
+    :Access Admin Features;
+    note right: User management, system config
+    :Manage Users;
+    :Configure System;
+    :View Analytics;
+  else (no)
+    :Access User Features;
+    note right: View alerts, change password
+    :View Dashboard;
+    :Change Password;
+  endif
+  
+else (no)
+  :Show Login Error;
+  :Return to Login;
+endif
+
+:User Logout?;
+if (yes) then (yes)
+  :End Session;
+  stop
+else (no)
+  :Continue Session;
+  goto :User Authentication;
+endif
+
+stop
+
+@enduml 

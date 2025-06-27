@@ -1,0 +1,109 @@
+@startuml NIDPS Packet Processing Activity Diagram
+!theme plain
+title NIDPS Packet Processing Workflow - Activity Diagram
+
+start
+
+:Packet Sniffer Initialized;
+note right: Scapy-based packet capture
+
+:Start Packet Capture Loop;
+
+while (System Running?) is (yes)
+  :Capture Network Packet;
+  note right: Real-time packet interception
+  
+  :Parse Packet Headers;
+  note right: Extract IP, port, protocol info
+  
+  :Basic Packet Validation;
+  if (Valid Packet?) then (yes)
+    
+    :Deep Packet Inspection (DPI);
+    note right: Analyze payload content
+    
+    :Extract Packet Features;
+    note right: Size, timing, flags, payload
+    
+    :Apply Detection Rules;
+    note right: Check against rules.json
+    
+    if (Rule Match Found?) then (yes)
+      :Calculate Threat Score;
+      :Determine Action Type;
+      
+      if (Action = Block?) then (yes)
+        :Extract Source IP;
+        :Check IP Block Status;
+        
+        if (IP Already Blocked?) then (no)
+          :Add IP to UFW Block List;
+          :Set Block Dwell Time;
+          :Schedule Auto-Unblock;
+          note right: Configurable timeout
+        endif
+        
+        :Log Block Action;
+        :Increment Block Counter;
+        
+      else (log)
+        :Log Detection Event;
+        :Update Event Counter;
+      endif
+      
+      :Generate Alert;
+      :Calculate Alert Severity;
+      
+      :Send Notifications;
+      if (Email Enabled?) then (yes)
+        :Send Email Alert;
+      endif
+      if (Slack Enabled?) then (yes)
+        :Send Slack Notification;
+      endif
+      if (Webhook Enabled?) then (yes)
+        :Send Webhook Alert;
+      endif
+      
+      :Update Real-time Analytics;
+      note right: Traffic patterns, threat scores
+      
+    else (no)
+      :Update Traffic Statistics;
+      note right: Protocol distribution, top IPs
+    endif
+    
+    :Update Performance Metrics;
+    note right: CPU, memory usage
+    
+    :Check Performance Thresholds;
+    if (High CPU Usage?) then (yes)
+      :Enable Performance Mode;
+      :Reduce Packet Sampling Rate;
+      note right: 60-80% CPU reduction
+    endif
+    
+    :Update System Health;
+    note right: Monitor resource usage
+    
+  else (no)
+    :Log Invalid Packet;
+    :Skip Processing;
+  endif
+  
+  :Check Auto-Recovery;
+  if (System Issues Detected?) then (yes)
+    :Trigger Auto-Recovery;
+    :Restart Components;
+    :Log Recovery Action;
+  endif
+  
+endwhile (no)
+
+:Stop Packet Capture;
+:Cleanup Resources;
+:Save Final Statistics;
+
+stop
+
+@enduml 

@@ -1,0 +1,15 @@
+# NIDPS Attacker Test Suite Requirements
+# Install on your Parrot OS VM
+
+# Network scanning and attacks
+python-nmap==0.7.1
+scapy==2.5.0
+paramiko==3.4.0
+
+# HTTP requests
+requests==2.32.4
+
+# Additional tools (optional)
+# hydra  # Install via apt: sudo apt install hydra
+# nmap   # Install via apt: sudo apt install nmap
+# hping3 # Install via apt: sudo apt install hping3 

@@ -1,0 +1,216 @@
+@startuml NIDPS User Management Activity Diagram
+!theme plain
+title NIDPS User Management & System Administration - Activity Diagram
+
+start
+
+:User Access Web Interface;
+note right: http://127.0.0.1:5000
+
+:Login Attempt;
+if (Valid Credentials?) then (yes)
+  :Load User Dashboard;
+  :Check User Role;
+  
+  if (Admin Role?) then (yes)
+    :Access Admin Dashboard;
+    :Display Admin Controls;
+    
+    while (Admin Session Active?) is (yes)
+      :Show Admin Menu;
+      
+      if (User Management Selected?) then (yes)
+        :Display User List;
+        :Show User Details;
+        
+        if (Create New User?) then (yes)
+          :Show User Creation Form;
+          :Validate User Input;
+          if (Valid Input?) then (yes)
+            :Create User Account;
+            :Assign Role;
+            :Set Password;
+            :Save to Database;
+            :Show Success Message;
+          else (no)
+            :Show Validation Error;
+          endif
+        endif
+        
+        if (Edit User?) then (yes)
+          :Load User Data;
+          :Show Edit Form;
+          :Validate Changes;
+          if (Valid Changes?) then (yes)
+            :Update User Information;
+            :Save to Database;
+            :Show Success Message;
+          else (no)
+            :Show Validation Error;
+          endif
+        endif
+        
+        if (Delete User?) then (yes)
+          :Check if Last Admin;
+          if (Last Admin?) then (yes)
+            :Show Protection Message;
+            :Prevent Deletion;
+          else (no)
+            :Confirm Deletion;
+            if (Confirmed?) then (yes)
+              :Remove User from Database;
+              :Show Success Message;
+            else (no)
+              :Cancel Deletion;
+            endif
+          endif
+        endif
+        
+      else (no)
+        if (System Configuration Selected?) then (yes)
+          :Show Configuration Panel;
+          :Display Current Settings;
+          
+          if (Performance Settings?) then (yes)
+            :Show Performance Controls;
+            :Adjust Sampling Rates;
+            :Configure Performance Mode;
+            :Save Settings;
+          endif
+          
+          if (Notification Settings?) then (yes)
+            :Configure Email Settings;
+            :Configure Slack Webhook;
+            :Configure Custom Webhooks;
+            :Test Notifications;
+            :Save Settings;
+          endif
+          
+          if (Recovery Settings?) then (yes)
+            :Configure Auto-Recovery;
+            :Set Health Thresholds;
+            :Configure Restart Policies;
+            :Save Settings;
+          endif
+        endif
+        
+        if (Analytics Dashboard Selected?) then (yes)
+          :Load Analytics Data;
+          :Display Traffic Patterns;
+          :Show Anomaly Scores;
+          :Display Top IP Addresses;
+          :Show Protocol Distribution;
+          :Update Real-time Charts;
+        endif
+        
+        if (System Monitor Selected?) then (yes)
+          :Load System Metrics;
+          :Display CPU Usage;
+          :Show Memory Usage;
+          :List Active Processes;
+          :Monitor Network Interfaces;
+          :Update Real-time Stats;
+        endif
+        
+        if (Detection Rules Selected?) then (yes)
+          :Load Current Rules;
+          :Display Rule List;
+          
+          if (Add New Rule?) then (yes)
+            :Show Rule Creation Form;
+            :Validate Rule Syntax;
+            if (Valid Rule?) then (yes)
+              :Add Rule to rules.json;
+              :Reload Detection Engine;
+              :Show Success Message;
+            else (no)
+              :Show Syntax Error;
+            endif
+          endif
+          
+          if (Edit Rule?) then (yes)
+            :Load Rule Data;
+            :Show Edit Form;
+            :Validate Changes;
+            if (Valid Changes?) then (yes)
+              :Update Rule in rules.json;
+              :Reload Detection Engine;
+              :Show Success Message;
+            else (no)
+              :Show Validation Error;
+            endif
+          endif
+          
+          if (Delete Rule?) then (yes)
+            :Confirm Deletion;
+            if (Confirmed?) then (yes)
+              :Remove Rule from rules.json;
+              :Reload Detection Engine;
+              :Show Success Message;
+            else (no)
+              :Cancel Deletion;
+            endif
+          endif
+        endif
+      endif
+      
+      :Check for Logout;
+      if (Logout Requested?) then (yes)
+        :End Admin Session;
+        break
+      endif
+    endwhile (no)
+    
+  else (no)
+    :Access User Dashboard;
+    :Display User Controls;
+    
+    while (User Session Active?) is (yes)
+      :Show User Menu;
+      
+      if (View Alerts Selected?) then (yes)
+        :Load User Alerts;
+        :Display Alert History;
+        :Show Alert Details;
+      endif
+      
+      if (Change Password Selected?) then (yes)
+        :Show Password Change Form;
+        :Validate Current Password;
+        if (Current Password Valid?) then (yes)
+          :Validate New Password;
+          if (New Password Valid?) then (yes)
+            :Update Password;
+            :Save to Database;
+            :Show Success Message;
+          else (no)
+            :Show Password Requirements;
+          endif
+        else (no)
+          :Show Invalid Password Error;
+        endif
+      endif
+      
+      if (View Profile Selected?) then (yes)
+        :Load User Profile;
+        :Display Account Information;
+        :Show Role and Permissions;
+      endif
+      
+      :Check for Logout;
+      if (Logout Requested?) then (yes)
+        :End User Session;
+        break
+      endif
+    endwhile (no)
+  endif
+  
+else (no)
+  :Show Login Error;
+  :Return to Login Form;
+endif
+
+:Session Ended;
+stop
+
+@enduml 
