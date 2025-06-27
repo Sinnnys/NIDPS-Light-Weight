@@ -33,7 +33,7 @@
             <i class="fas fa-sync-alt"></i> Refresh
         </button>
         <span class="badge badge-info" id="rules-count">{{ rules|length if rules else 0 }} rules</span>
-        <small class="text-muted">Last updated: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</small>
+        <small class="text-muted">Last updated: <span id="last-updated"></span></small>
     </h2>
     <div id="rules-container">
         {% if rules %}
@@ -69,6 +69,9 @@
     </div>
 
 <script>
+// Set the last updated timestamp
+document.getElementById('last-updated').textContent = new Date().toLocaleString();
+
 function refreshRules() {
     // Reload the page to get the latest rules with cache busting
     window.location.href = window.location.pathname + '?t=' + new Date().getTime();
