@@ -64,3 +64,6 @@ jinja2.exceptions.UndefinedError: 'moment' is undefined
 2025-06-27 20:05:57,257 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
 2025-06-27 20:06:01,763 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
 2025-06-27 20:06:01,807 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 21:27:47,855 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 21:27:50,236 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 21:44:12,385 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
