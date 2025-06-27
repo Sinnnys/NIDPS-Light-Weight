@@ -1,70 +1,123 @@
-2025-06-27 19:27:58,094 INFO: Engine restart successful [in /home/sinnys/NIDPS/nidps/core/recovery.py:200]
-2025-06-27 19:27:58,095 INFO: Restarting packet sniffer... [in /home/sinnys/NIDPS/nidps/core/recovery.py:211]
-2025-06-27 19:27:59,096 INFO: Attempting to start sniffer on interface default [in /home/sinnys/NIDPS/nidps/core/sniffer.py:16]
-2025-06-27 19:27:59,096 INFO: Sniffer restart successful [in /home/sinnys/NIDPS/nidps/core/recovery.py:226]
-2025-06-27 19:27:59,142 INFO: Memory cleared [in /home/sinnys/NIDPS/nidps/core/recovery.py:237]
-2025-06-27 19:27:59,143 INFO: Configuration backed up to backups [in /home/sinnys/NIDPS/nidps/core/recovery.py:262]
-2025-06-27 19:27:59,143 INFO: Auto-recovery completed successfully [in /home/sinnys/NIDPS/nidps/core/recovery.py:180]
-2025-06-27 19:28:11,879 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:44980 > 43.245.49.83:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:11,886 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:33090 > 43.245.49.144:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:11,902 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:60260 > 43.245.49.105:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:11,913 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:46190 > 199.38.181.93:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:12,141 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:36584 > 199.38.181.104:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:12,826 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:44986 > 43.245.49.83:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:12,834 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:46206 > 199.38.181.93:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:13,062 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:60276 > 43.245.49.105:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:13,071 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:36590 > 199.38.181.104:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:28:13,301 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:33094 > 43.245.49.144:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:29:46,419 INFO: Rule added: {'rule_name': 'test rules 1', 'protocol': 'UDP', 'conditions': {}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
-2025-06-27 19:29:46,420 WARNING: ALERT: Rule 'test rules 1' (MEDIUM) matched: Ether / IP / UDP 192.168.0.173:41641 > 192.168.0.149:41641 / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:29:46,422 WARNING: ALERT: Rule 'test rules 1' (MEDIUM) matched: Ether / IP / UDP 192.168.0.149:41641 > 192.168.0.173:41641 / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:29:46,425 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:30:36,805 INFO: Rule added: {'rule_name': 'test rules11', 'protocol': 'ICMP', 'conditions': {}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
-2025-06-27 19:30:36,805 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:31:05,474 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:60748 > 91.189.91.49:http S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:31:56,657 INFO: Advanced analytics stopped [in /home/sinnys/NIDPS/nidps/core/analytics.py:76]
-2025-06-27 19:31:56,657 INFO: Auto-recovery monitoring stopped [in /home/sinnys/NIDPS/nidps/core/recovery.py:69]
-2025-06-27 19:32:00,093 INFO: WebSocket real-time updates stopped [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:77]
-2025-06-27 19:32:00,094 INFO: NIDPS Engine Stopped. [in /home/sinnys/NIDPS/nidps/core/engine.py:221]
-2025-06-27 19:32:04,764 INFO: Attempting to start sniffer on interface default [in /home/sinnys/NIDPS/nidps/core/sniffer.py:16]
-2025-06-27 19:32:04,767 INFO: Advanced analytics started [in /home/sinnys/NIDPS/nidps/core/analytics.py:69]
-2025-06-27 19:32:04,767 INFO: Auto-recovery monitoring started [in /home/sinnys/NIDPS/nidps/core/recovery.py:62]
-2025-06-27 19:32:04,769 INFO: WebSocket real-time updates started [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:70]
-2025-06-27 19:32:04,789 INFO: NIDPS Engine Started with all advanced features. [in /home/sinnys/NIDPS/nidps/core/engine.py:193]
-2025-06-27 19:32:18,071 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 3.234.19.184:https > 192.168.0.149:37724 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:14,625 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:50938 > 20.205.243.166:https S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:32,056 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:44678 > 20.42.73.24:https S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:32,925 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:44678 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:32,926 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:44678 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:32,927 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:44678 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:38,437 WARNING: ALERT: Rule 'Potential TCP Port Scan (SYN)' (MEDIUM) matched: Ether / IP / TCP 192.168.0.149:50832 > 20.42.73.24:https S [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:39,376 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:50832 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:39,377 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:50832 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:33:39,378 WARNING: ALERT: Rule 'Suspicious Large Packets' (MEDIUM) matched: Ether / IP / TCP 20.42.73.24:https > 192.168.0.149:50832 A / Raw [in /home/sinnys/NIDPS/nidps/core/engine.py:88]
-2025-06-27 19:34:58,482 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:37:29,789 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:37:37,137 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
-2025-06-27 19:38:40,029 INFO: Rule added: {'rule_name': 'rules tesitng 1', 'protocol': 'TCP', 'conditions': {}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
-2025-06-27 19:38:40,030 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:40:17,822 INFO: Attempting to start sniffer on interface default [in /home/sinnys/NIDPS/nidps/core/sniffer.py:16]
-2025-06-27 19:40:17,822 INFO: Advanced analytics started [in /home/sinnys/NIDPS/nidps/core/analytics.py:69]
-2025-06-27 19:40:17,823 INFO: Auto-recovery monitoring started [in /home/sinnys/NIDPS/nidps/core/recovery.py:62]
-2025-06-27 19:40:17,824 INFO: WebSocket real-time updates started [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:70]
-2025-06-27 19:40:17,824 INFO: NIDPS Engine Started with all advanced features. [in /home/sinnys/NIDPS/nidps/core/engine.py:193]
-2025-06-27 19:40:18,824 WARNING: Auto-recovery triggered due to: Engine not running [in /home/sinnys/NIDPS/nidps/core/recovery.py:159]
-2025-06-27 19:40:18,825 INFO: Configuration backed up to backups [in /home/sinnys/NIDPS/nidps/core/recovery.py:262]
-2025-06-27 19:40:18,825 INFO: Restarting NIDPS engine... [in /home/sinnys/NIDPS/nidps/core/recovery.py:188]
-2025-06-27 19:40:23,845 INFO: Advanced analytics stopped [in /home/sinnys/NIDPS/nidps/core/analytics.py:76]
-2025-06-27 19:40:23,845 ERROR: Error stopping NIDPS: cannot join current thread [in /home/sinnys/NIDPS/nidps/core/engine.py:230]
-2025-06-27 19:40:25,846 INFO: NIDPS is already running. [in /home/sinnys/NIDPS/nidps/core/engine.py:179]
-2025-06-27 19:40:30,846 INFO: Engine restart successful [in /home/sinnys/NIDPS/nidps/core/recovery.py:200]
-2025-06-27 19:40:30,847 INFO: Restarting packet sniffer... [in /home/sinnys/NIDPS/nidps/core/recovery.py:211]
-2025-06-27 19:40:31,847 INFO: Attempting to start sniffer on interface default [in /home/sinnys/NIDPS/nidps/core/sniffer.py:16]
-2025-06-27 19:40:31,847 INFO: Sniffer restart successful [in /home/sinnys/NIDPS/nidps/core/recovery.py:226]
-2025-06-27 19:40:31,894 INFO: Memory cleared [in /home/sinnys/NIDPS/nidps/core/recovery.py:237]
-2025-06-27 19:40:31,894 INFO: Configuration backed up to backups [in /home/sinnys/NIDPS/nidps/core/recovery.py:262]
-2025-06-27 19:40:31,894 INFO: Auto-recovery completed successfully [in /home/sinnys/NIDPS/nidps/core/recovery.py:180]
-2025-06-27 19:40:48,903 INFO: Advanced analytics stopped [in /home/sinnys/NIDPS/nidps/core/analytics.py:76]
-2025-06-27 19:40:52,210 INFO: Advanced analytics stopped [in /home/sinnys/NIDPS/nidps/core/analytics.py:76]
-2025-06-27 19:40:53,903 INFO: Auto-recovery monitoring stopped [in /home/sinnys/NIDPS/nidps/core/recovery.py:69]
-2025-06-27 19:40:57,211 INFO: Auto-recovery monitoring stopped [in /home/sinnys/NIDPS/nidps/core/recovery.py:69]
+2025-06-27 19:40:57,826 INFO: WebSocket real-time updates stopped [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:77]
+2025-06-27 19:40:57,826 INFO: WebSocket real-time updates stopped [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:77]
+2025-06-27 19:40:57,827 INFO: NIDPS Engine Stopped. [in /home/sinnys/NIDPS/nidps/core/engine.py:221]
+2025-06-27 19:40:57,827 INFO: NIDPS Engine Stopped. [in /home/sinnys/NIDPS/nidps/core/engine.py:221]
+2025-06-27 19:43:54,095 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:43:54,097 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 19:43:54,097 INFO: Rule added: {'rule_name': 'Admin Test Rule', 'protocol': 'TCP', 'conditions': {'dport': '9090'}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
+2025-06-27 19:43:54,098 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:43:54,098 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:43:54,112 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:43:54,112 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:44:38,980 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:44:50,826 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 19:44:52,954 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:44:55,126 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:44:55,428 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:45:02,395 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:45:15,649 INFO: Rule added: {'rule_name': 'testrules1234', 'protocol': 'UDP', 'conditions': {}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
+2025-06-27 19:45:15,649 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:45:15,707 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:45:23,386 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:46:54,626 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:47:14,660 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:47:24,732 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:47:30,977 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:47:32,309 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:02,923 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:48:05,391 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 19:48:05,392 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:07,145 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:10,127 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:10,152 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:31,288 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:48:31,315 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:52:39,556 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:52:42,188 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 19:52:42,189 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:52:42,205 ERROR: Exception on /rules [GET] [in /home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/auth/decorators.py", line 10, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/web/routes.py", line 156, in rules
+    return render_template('rules.html', title='Detection Rules', rules=all_rules, form=form)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/sinnys/NIDPS/nidps/templates/base.html", line 198, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 36, in block 'content'
+    <small class="text-muted">Last updated: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</small>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'moment' is undefined
+2025-06-27 19:53:10,791 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:53:10,792 ERROR: Exception on /rules [GET] [in /home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/auth/decorators.py", line 10, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/web/routes.py", line 156, in rules
+    return render_template('rules.html', title='Detection Rules', rules=all_rules, form=form)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/sinnys/NIDPS/nidps/templates/base.html", line 198, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 36, in block 'content'
+    <small class="text-muted">Last updated: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</small>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'moment' is undefined
+2025-06-27 19:53:45,766 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]

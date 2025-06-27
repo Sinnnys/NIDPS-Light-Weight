@@ -1,34 +1,66 @@
-2025-06-27 19:40:57,826 INFO: WebSocket real-time updates stopped [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:77]
-2025-06-27 19:40:57,826 INFO: WebSocket real-time updates stopped [in /home/sinnys/NIDPS/nidps/core/websocket_manager.py:77]
-2025-06-27 19:40:57,827 INFO: NIDPS Engine Stopped. [in /home/sinnys/NIDPS/nidps/core/engine.py:221]
-2025-06-27 19:40:57,827 INFO: NIDPS Engine Stopped. [in /home/sinnys/NIDPS/nidps/core/engine.py:221]
-2025-06-27 19:43:54,095 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:43:54,097 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
-2025-06-27 19:43:54,097 INFO: Rule added: {'rule_name': 'Admin Test Rule', 'protocol': 'TCP', 'conditions': {'dport': '9090'}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
-2025-06-27 19:43:54,098 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:43:54,098 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:43:54,112 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:43:54,112 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:44:38,980 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:44:50,826 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
-2025-06-27 19:44:52,954 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:44:55,126 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:44:55,428 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:45:02,395 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:45:15,649 INFO: Rule added: {'rule_name': 'testrules1234', 'protocol': 'UDP', 'conditions': {}, 'action': 'log'} [in /home/sinnys/NIDPS/nidps/core/engine.py:251]
-2025-06-27 19:45:15,649 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:45:15,707 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:45:23,386 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:46:54,626 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:47:14,660 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:47:24,732 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:47:30,977 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:47:32,309 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:02,923 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
-2025-06-27 19:48:05,391 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
-2025-06-27 19:48:05,392 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:07,145 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:10,127 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:10,152 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:31,288 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
-2025-06-27 19:48:31,315 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:256]
+2025-06-27 19:53:45,767 ERROR: Exception on /rules [GET] [in /home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py:875]
+Traceback (most recent call last):
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/auth/decorators.py", line 10, in decorated_function
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/web/routes.py", line 156, in rules
+    return render_template('rules.html', title='Detection Rules', rules=all_rules, form=form)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/sinnys/NIDPS/nidps/templates/base.html", line 198, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/nidps/templates/rules.html", line 36, in block 'content'
+    <small class="text-muted">Last updated: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</small>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sinnys/NIDPS/NIDPS/lib/python3.12/site-packages/jinja2/utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'moment' is undefined
+2025-06-27 19:54:51,801 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 19:54:53,841 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 19:54:56,401 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:55:46,247 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:56:20,712 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:57:05,984 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:57:53,080 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:58:41,932 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:59:12,862 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 19:59:58,325 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:01:02,631 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:01:50,808 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:34,283 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:43,604 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:43,687 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:50,773 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:50,868 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:02:54,664 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:03:00,619 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:05:54,703 INFO: NIDPS startup [in /home/sinnys/NIDPS/nidps/__init__.py:57]
+2025-06-27 20:05:57,256 INFO: Prevention Engine initialized with 30 minute dwell time [in /home/sinnys/NIDPS/nidps/core/prevention.py:18]
+2025-06-27 20:05:57,257 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:06:01,763 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
+2025-06-27 20:06:01,807 INFO: Rules reloaded from file [in /home/sinnys/NIDPS/nidps/core/engine.py:262]
