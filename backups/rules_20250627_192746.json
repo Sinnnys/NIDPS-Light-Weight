@@ -1,0 +1,121 @@
+{
+    "rules": [
+        {
+            "rule_name": "ICMP Echo Request (Ping)",
+            "protocol": "ICMP",
+            "conditions": {
+                "type": 8
+            },
+            "action": "log",
+            "severity": "low"
+        },
+        {
+            "rule_name": "Potential TCP Port Scan (SYN)",
+            "protocol": "TCP",
+            "conditions": {
+                "flags": "S"
+            },
+            "action": "log",
+            "severity": "medium",
+            "rate_limit": {
+                "max_attempts": 10,
+                "time_window": 60
+            }
+        },
+        {
+            "rule_name": "SSH Connection Attempt",
+            "protocol": "TCP",
+            "conditions": {
+                "dport": 22
+            },
+            "action": "log",
+            "severity": "low"
+        },
+        {
+            "rule_name": "SSH Brute Force Attack",
+            "protocol": "TCP",
+            "conditions": {
+                "dport": 22
+            },
+            "action": "block",
+            "severity": "high",
+            "rate_limit": {
+                "max_attempts": 5,
+                "time_window": 300
+            }
+        },
+        {
+            "rule_name": "HTTP/HTTPS Traffic",
+            "protocol": "TCP",
+            "conditions": {
+                "dport": [
+                    80,
+                    443,
+                    8080,
+                    8443
+                ]
+            },
+            "action": "log",
+            "severity": "low"
+        },
+        {
+            "rule_name": "DNS Query",
+            "protocol": "UDP",
+            "conditions": {
+                "dport": 53
+            },
+            "action": "log",
+            "severity": "low"
+        },
+        {
+            "rule_name": "Suspicious Large Packets",
+            "protocol": "ANY",
+            "conditions": {
+                "packet_size": ">1500"
+            },
+            "action": "log",
+            "severity": "medium"
+        },
+        {
+            "rule_name": "Fragmented Packets",
+            "protocol": "IP",
+            "conditions": {
+                "frag": true
+            },
+            "action": "log",
+            "severity": "medium"
+        },
+        {
+            "rule_name": "RST Scan Detection",
+            "protocol": "TCP",
+            "conditions": {
+                "flags": "R"
+            },
+            "action": "log",
+            "severity": "medium",
+            "rate_limit": {
+                "max_attempts": 20,
+                "time_window": 60
+            }
+        },
+        {
+            "rule_name": "FIN Scan Detection",
+            "protocol": "TCP",
+            "conditions": {
+                "flags": "F"
+            },
+            "action": "log",
+            "severity": "medium",
+            "rate_limit": {
+                "max_attempts": 15,
+                "time_window": 60
+            }
+        }
+    ],
+    "global_settings": {
+        "default_severity": "medium",
+        "max_alerts_per_minute": 100,
+        "alert_retention_days": 30,
+        "auto_block_threshold": 3
+    }
+}

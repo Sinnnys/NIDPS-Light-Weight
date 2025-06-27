@@ -10,6 +10,7 @@ from scapy.all import IP
 import logging
 import threading
 import time
+import os
 
 class NIDPSEngine:
     _instance = None
@@ -26,6 +27,11 @@ class NIDPSEngine:
         self._initialized = True
 
         self.logger = logger or logging.getLogger(__name__)
+        
+        # Use absolute path for rules file
+        if not os.path.isabs(rules_file):
+            rules_file = os.path.join(os.getcwd(), rules_file)
+        
         self.sniffer = None
         self.detection_engine = DetectionEngine(rules_file, logger=self.logger)
         self.prevention_engine = PreventionEngine(dwell_time_minutes, logger=self.logger)

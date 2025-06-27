@@ -79,6 +79,12 @@ def rules():
     
     form = RuleForm()
     if form.validate_on_submit():
+        print(f"=== ADDING NEW RULE ===")
+        print(f"Rule name: {form.rule_name.data}")
+        print(f"Protocol: {form.protocol.data}")
+        print(f"Conditions: {form.conditions.data}")
+        print(f"Action: {form.action.data}")
+        
         # Create new rule object
         conditions = {}
         if form.conditions.data:
@@ -94,23 +100,43 @@ def rules():
             "action": form.action.data
         }
         
+        print(f"New rule object: {new_rule}")
+        
         # Get current rules from file
-        rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
+        # Use absolute path to ensure we're accessing the correct file
+        rules_path = os.path.join(os.getcwd(), 'rules.json')
+        print(f"Rules file path: {rules_path}")
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"File exists: {os.path.exists(rules_path)}")
+        
         try:
             with open(rules_path, 'r') as f:
                 data = json.load(f)
+            print(f"Current rules in file: {len(data.get('rules', []))}")
         except FileNotFoundError:
             data = {"rules": [], "global_settings": {}}
+            print("File not found, creating new data structure")
         
         # Add the new rule to the file data
         data['rules'].append(new_rule)
+        print(f"Rules after adding: {len(data['rules'])}")
         
         # Save back to file
-        with open(rules_path, 'w') as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(rules_path, 'w') as f:
+                json.dump(data, f, indent=4)
+            print(f"Successfully saved {len(data['rules'])} rules to file")
+        except Exception as e:
+            print(f"Error saving to file: {e}")
+            flash(f'Error saving rule to file: {str(e)}', 'error')
+            return redirect(url_for('web.rules'))
 
         # Reload rules in the engine to ensure consistency
-        engine.reload_rules()
+        try:
+            engine.reload_rules()
+            print("Engine rules reloaded successfully")
+        except Exception as e:
+            print(f"Error reloading engine rules: {e}")
 
         flash('Rule added successfully!')
         return redirect(url_for('web.rules'))

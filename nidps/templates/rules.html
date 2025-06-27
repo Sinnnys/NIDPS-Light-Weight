@@ -33,6 +33,7 @@
             <i class="fas fa-sync-alt"></i> Refresh
         </button>
         <span class="badge badge-info" id="rules-count">{{ rules|length if rules else 0 }} rules</span>
+        <small class="text-muted">Last updated: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</small>
     </h2>
     <div id="rules-container">
         {% if rules %}
@@ -69,8 +70,8 @@
 
 <script>
 function refreshRules() {
-    // Reload the page to get the latest rules
-    window.location.reload();
+    // Reload the page to get the latest rules with cache busting
+    window.location.href = window.location.pathname + '?t=' + new Date().getTime();
 }
 
 // Auto-refresh rules every 30 seconds
