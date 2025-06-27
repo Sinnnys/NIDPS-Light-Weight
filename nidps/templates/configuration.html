@@ -299,6 +299,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadConfiguration();
     updateEngineStatus();
+    
+    // Update engine status every 10 seconds
+    setInterval(updateEngineStatus, 10000);
 });
 
 function loadConfiguration() {
@@ -398,22 +401,21 @@ function updateEngineStatus() {
         .then(response => response.json())
         .then(data => {
             const statusElement = document.getElementById('engine-status');
-            const startBtn = document.getElementById('startEngineBtn');
-            const stopBtn = document.getElementById('stopEngineBtn');
             
-            if (data.status === 'running') {
-                statusElement.textContent = 'Running';
-                statusElement.className = 'badge bg-success';
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
+            if (data.running) {
+                statusElement.value = 'Running';
+                statusElement.className = 'form-control text-success';
             } else {
-                statusElement.textContent = 'Stopped';
-                statusElement.className = 'badge bg-danger';
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
+                statusElement.value = 'Stopped';
+                statusElement.className = 'form-control text-danger';
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error updating engine status:', error);
+            const statusElement = document.getElementById('engine-status');
+            statusElement.value = 'Error';
+            statusElement.className = 'form-control text-warning';
+        });
 }
 
 function updatePerformanceSettings() {

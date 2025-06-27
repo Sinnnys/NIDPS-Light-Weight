@@ -526,4 +526,21 @@ def api_system_health():
         
         return jsonify(health_data)
     except Exception as e:
+        return jsonify({'error': str(e)})
+
+@bp.route('/api/rules_status')
+@login_required
+def api_rules_status():
+    """API endpoint to get rules status and count."""
+    try:
+        engine = get_engine()
+        rules = engine.get_rules()
+        
+        status = {
+            'total_rules': len(rules),
+            'rules': rules,
+            'last_updated': time.time()
+        }
+        return jsonify(status)
+    except Exception as e:
         return jsonify({'error': str(e)}) 

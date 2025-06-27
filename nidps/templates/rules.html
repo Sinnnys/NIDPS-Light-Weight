@@ -28,36 +28,58 @@
     </form>
     <hr>
 
-    <h2>Current Rules</h2>
-    {% if rules %}
-        <table border="1" style="width:100%; border-collapse: collapse;">
-            <tr style="background-color:#f2f2f2;">
-                <th style="padding: 8px; text-align: left;">Rule Name</th>
-                <th style="padding: 8px; text-align: left;">Protocol</th>
-                <th style="padding: 8px; text-align: left;">Conditions</th>
-                <th style="padding: 8px; text-align: left;">Action</th>
-                <th style="padding: 8px; text-align: left;">Manage</th>
-            </tr>
-            {% for rule in rules %}
-            <tr>
-                <td style="padding: 8px;">{{ rule.rule_name }}</td>
-                <td style="padding: 8px;">{{ rule.protocol }}</td>
-                <td style="padding: 8px;">
-                    <ul>
-                    {% for key, value in rule.conditions.items() %}
-                        <li><strong>{{ key }}:</strong> {{ value }}</li>
-                    {% endfor %}
-                    </ul>
-                </td>
-                <td style="padding: 8px;">{{ rule.action }}</td>
-                <td style="padding: 8px;">
-                    <a href="{{ url_for('web.delete_rule', rule_name=rule.rule_name) }}" onclick="return confirm('Are you sure you want to delete this rule?');">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No detection rules are loaded.</p>
-    {% endif %}
+    <h2>Current Rules 
+        <button type="button" class="btn btn-sm btn-outline-primary" onclick="refreshRules()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+        <span class="badge badge-info" id="rules-count">{{ rules|length if rules else 0 }} rules</span>
+    </h2>
+    <div id="rules-container">
+        {% if rules %}
+            <table border="1" style="width:100%; border-collapse: collapse;">
+                <tr style="background-color:#f2f2f2;">
+                    <th style="padding: 8px; text-align: left;">Rule Name</th>
+                    <th style="padding: 8px; text-align: left;">Protocol</th>
+                    <th style="padding: 8px; text-align: left;">Conditions</th>
+                    <th style="padding: 8px; text-align: left;">Action</th>
+                    <th style="padding: 8px; text-align: left;">Manage</th>
+                </tr>
+                {% for rule in rules %}
+                <tr>
+                    <td style="padding: 8px;">{{ rule.rule_name }}</td>
+                    <td style="padding: 8px;">{{ rule.protocol }}</td>
+                    <td style="padding: 8px;">
+                        <ul>
+                        {% for key, value in rule.conditions.items() %}
+                            <li><strong>{{ key }}:</strong> {{ value }}</li>
+                        {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="padding: 8px;">{{ rule.action }}</td>
+                    <td style="padding: 8px;">
+                        <a href="{{ url_for('web.delete_rule', rule_name=rule.rule_name) }}" onclick="return confirm('Are you sure you want to delete this rule?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No detection rules are loaded.</p>
+        {% endif %}
+    </div>
+
+<script>
+function refreshRules() {
+    // Reload the page to get the latest rules
+    window.location.reload();
+}
+
+// Auto-refresh rules every 30 seconds
+setInterval(function() {
+    // Only refresh if the page is visible
+    if (!document.hidden) {
+        refreshRules();
+    }
+}, 30000);
+</script>
 
 {% endblock %} 
