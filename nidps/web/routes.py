@@ -94,13 +94,20 @@ def rules():
             "action": form.action.data
         }
         
-        # Add the new rule
-        engine.add_rule(new_rule)
+        # Get current rules from file
+        rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
+        try:
+            with open(rules_path, 'r') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            data = {"rules": [], "global_settings": {}}
+        
+        # Add the new rule to the file data
+        data['rules'].append(new_rule)
         
         # Save back to file
-        rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
         with open(rules_path, 'w') as f:
-            json.dump({"rules": engine.get_rules()}, f, indent=4)
+            json.dump(data, f, indent=4)
 
         # Reload rules in the engine to ensure consistency
         engine.reload_rules()
@@ -113,6 +120,8 @@ def rules():
         engine.reload_rules()
         all_rules = engine.get_rules()
         print(f"Loaded {len(all_rules)} rules from file")  # Debug output
+        for rule in all_rules:
+            print(f"Rule: {rule.get('rule_name')}")  # Debug output
     except Exception as e:
         print(f"Error loading rules: {e}")  # Debug output
         all_rules = []
@@ -543,9 +552,21 @@ def api_rules_status():
         engine = get_engine()
         rules = engine.get_rules()
         
+        # Also get rules directly from file for comparison
+        rules_path = os.path.join(os.path.dirname(current_app.root_path), '..', 'rules.json')
+        file_rules = []
+        try:
+            with open(rules_path, 'r') as f:
+                data = json.load(f)
+                file_rules = data.get('rules', [])
+        except Exception as e:
+            file_rules = []
+        
         status = {
             'total_rules': len(rules),
+            'file_rules_count': len(file_rules),
             'rules': rules,
+            'file_rules': file_rules,
             'last_updated': time.time()
         }
         return jsonify(status)
