@@ -108,8 +108,16 @@ def rules():
         flash('Rule added successfully!')
         return redirect(url_for('web.rules'))
 
-    # Get current rules (this will reload from file)
-    all_rules = engine.get_rules()
+    # Force reload rules from file to ensure we have the latest version
+    try:
+        engine.reload_rules()
+        all_rules = engine.get_rules()
+        print(f"Loaded {len(all_rules)} rules from file")  # Debug output
+    except Exception as e:
+        print(f"Error loading rules: {e}")  # Debug output
+        all_rules = []
+        flash(f'Error loading rules: {str(e)}', 'error')
+    
     return render_template('rules.html', title='Detection Rules', rules=all_rules, form=form)
 
 @bp.route('/analytics')
@@ -168,7 +176,7 @@ def api_logs():
         return jsonify({'error': str(e)})
 
 @bp.route('/api/start_engine', methods=['POST'])
-@login_required
+@admin_required
 def api_start_engine():
     """API endpoint to start the NIDPS engine."""
     global engine
@@ -186,7 +194,7 @@ def api_start_engine():
         return jsonify({'status': 'error', 'message': f'Failed to start engine: {str(e)}'})
 
 @bp.route('/api/stop_engine', methods=['POST'])
-@login_required
+@admin_required
 def api_stop_engine():
     """API endpoint to stop the NIDPS engine."""
     global engine
@@ -441,7 +449,7 @@ def api_performance_stats():
         return jsonify({'error': str(e)})
 
 @bp.route('/api/set_performance_mode', methods=['POST'])
-@login_required
+@admin_required
 def api_set_performance_mode():
     """API endpoint to set performance mode."""
     try:
@@ -456,25 +464,24 @@ def api_set_performance_mode():
         return jsonify({'status': 'error', 'message': str(e)})
 
 @bp.route('/api/set_packet_sampling', methods=['POST'])
-@login_required
+@admin_required
 def api_set_packet_sampling():
-    """API endpoint to set packet sampling rate."""
+    """API endpoint to set packet sampling rates."""
     try:
         data = request.get_json()
-        rate = data.get('rate', 0.1)
-        
-        if not 0.01 <= rate <= 1.0:
-            return jsonify({'status': 'error', 'message': 'Sampling rate must be between 0.01 and 1.0'})
+        analytics_rate = data.get('analytics_rate', 0.1)
+        dpi_rate = data.get('dpi_rate', 0.05)
         
         engine = get_engine()
-        engine.set_packet_sampling_rate(rate)
+        engine.set_packet_sampling_rate(analytics_rate)
+        engine.set_dpi_sampling_rate(dpi_rate)
         
-        return jsonify({'status': 'success', 'message': f'Packet sampling rate set to {rate}'})
+        return jsonify({'status': 'success', 'message': f'Sampling rates updated: Analytics {analytics_rate*100}%, DPI {dpi_rate*100}%'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
 @bp.route('/api/set_logging_mode', methods=['POST'])
-@login_required
+@admin_required
 def api_set_logging_mode():
     """API endpoint to set logging mode."""
     try:
